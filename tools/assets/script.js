@@ -11,6 +11,10 @@
 
   var STORAGE_KEY = "paga-docs-theme";
 
+  // Marks the document as scripted, so the stylesheet can hide controls
+  // that would not work without JavaScript.
+  document.documentElement.classList.add("has-js");
+
   /* ---------------------------------------------------------------- */
   /* Theme                                                             */
   /* ---------------------------------------------------------------- */
@@ -179,5 +183,46 @@
     });
 
     apply();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Contents highlighting                                              */
+  /* ---------------------------------------------------------------- */
+
+  var toc = document.querySelector(".toc");
+  if (toc) {
+    var tocLinks = Array.prototype.slice.call(toc.querySelectorAll("a[href^='#']"));
+    var targets = tocLinks
+      .map(function (link) {
+        var id = link.getAttribute("href").slice(1);
+        var element = document.getElementById(id);
+        return element ? { link: link, element: element } : null;
+      })
+      .filter(Boolean);
+
+    if (targets.length) {
+      var current = null;
+
+      function highlight() {
+        // The last target whose top is above the reading line.
+        var line = window.scrollY + 120;
+        var next = targets[0];
+        for (var index = 0; index < targets.length; index += 1) {
+          if (targets[index].element.offsetTop <= line) {
+            next = targets[index];
+          } else {
+            break;
+          }
+        }
+        if (next === current) return;
+        if (current) current.link.removeAttribute("data-current");
+        next.link.setAttribute("data-current", "true");
+        current = next;
+      }
+
+      highlight();
+      window.addEventListener("scroll", highlight, { passive: true });
+      window.addEventListener("resize", highlight);
+    }
   }
 })();

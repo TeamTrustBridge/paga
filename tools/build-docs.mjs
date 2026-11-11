@@ -18,6 +18,8 @@ import { mkdirSync, readFileSync, writeFileSync, copyFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { highlight } from "./highlight.mjs";
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
 
@@ -94,8 +96,8 @@ function codeBlockStable(language, code, key) {
   const id = `code-${language.id}-${key}`;
   return [
     `<div class="code-block">`,
-    `<button class="button" data-copy="#${id}" type="button">Copy</button>`,
-    `<pre><code id="${id}" class="language-${escapeAttr(language.fence)}">${escapeHtml(code)}</code></pre>`,
+    `<button class="button copy-button" data-copy="#${id}" type="button" aria-label="Copy this sample to the clipboard">Copy</button>`,
+    `<pre><code id="${id}" class="language-${escapeAttr(language.fence)}">${highlight(code, language.id)}</code></pre>`,
     `</div>`,
   ].join("");
 }
@@ -107,6 +109,18 @@ function tag(text, className) {
 function apiTag(operation) {
   if (operation.api === "collect") return tag("Collect API", "tag-collect");
   return tag("Business API");
+}
+
+/**
+ * Render an endpoint as a method pill plus its path.
+ */
+function endpointTag(endpoint) {
+  const [method, ...rest] = endpoint.split(" ");
+  const path = rest.join(" ");
+  const verb = method.toLowerCase();
+  return (
+    tag(method, `tag-method tag-${verb}`) + tag(path, "tag-endpoint")
+  );
 }
 
 function authLabel(auth) {
@@ -199,6 +213,24 @@ ${body}
 /* Operation rendering                                                         */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Render a "on this page" contents list.
+ */
+function contentsList(entries) {
+  if (entries.length < 2) return "";
+  return `<nav class="toc" aria-label="On this page">
+  <p class="toc-heading">On this page</p>
+  <ul>
+${entries
+  .map(
+    (entry) =>
+      `    <li><a href="#op-${escapeAttr(entry.id)}">${escapeHtml(entry.name)}</a></li>`,
+  )
+  .join("\n")}
+  </ul>
+</nav>`;
+}
+
 function operationBlock(operation, language) {
   const lang = operation.languages[language.id];
   const notes = (operation.notes ?? [])
@@ -216,7 +248,7 @@ function operationBlock(operation, language) {
   </div>
   <div class="meta">
     ${apiTag(operation)}
-    ${tag(operation.endpoint, "tag-endpoint")}
+    ${endpointTag(operation.endpoint)}
     ${tag(authLabel(operation.auth))}
     ${hash}
   </div>
@@ -325,8 +357,15 @@ let status = client.get_payment_status("ORD-2026-0187").await?;`,
       ? `<p>The crate is published as <code>paga-rs</code>, but the library is imported as <code>paga</code>.</p>`
       : `<p>Import it as <code>paga</code>.</p>`;
 
-  const body = `<h1>${escapeHtml(language.package)}</h1>
-<p class="lead">Unofficial async ${escapeHtml(language.label)} SDK for the <a href="https://developer-docs.paga.com/">Paga Engine API</a>.</p>
+  const body = `<div class="hero">
+<p class="hero-eyebrow">Unofficial community SDK</p>
+<h1>${escapeHtml(language.package)}</h1>
+<p class="hero-lead">Async ${escapeHtml(language.label)} SDK for the <a href="https://developer-docs.paga.com/">Paga Engine API</a> — ${dataset.operations.length} operations and ${dataset.webhooks.length} webhook verifiers, organised exactly like Paga's own documentation.</p>
+<div class="hero-actions">
+  <a class="button" href="reference.html">Browse the API reference</a>
+  <a class="button" href="accept-payments.html">Start with accepting payments</a>
+</div>
+</div>
 
 <div class="callout">
   <p class="callout-title">This is an unofficial SDK</p>
@@ -459,7 +498,9 @@ function sectionPage(language, dataset, section) {
   const body = `<h1>${escapeHtml(section.title)}</h1>
 <p class="lead">${prose(section.description)}</p>
 
-<p>${escapeHtml(section.intro)}</p>
+<p>${prose(section.intro)}</p>
+
+${contentsList(operations)}
 
 <h2 id="operations">Operations</h2>
 ${operations.map((operation) => operationBlock(operation, language)).join("\n\n")}
@@ -523,7 +564,7 @@ ${dataset.operations
   </div>
   <div class="meta">
     ${apiTag(operation)}
-    ${tag(operation.endpoint, "tag-endpoint")}
+    ${endpointTag(operation.endpoint)}
     ${tag(authLabel(operation.auth))}
     ${tag(section.navTitle)}
     ${operation.hashFields.length ? tag(operation.hashFields.join(" + "), "tag-endpoint") : ""}
@@ -556,6 +597,8 @@ function webhooksPage(language, dataset) {
   <p class="callout-title">Always verify the hash first</p>
   <p>Verify the signature before you act on a callback. Then de-duplicate: Paga retries until you answer, so the same callback will arrive more than once.</p>
 </div>
+
+${contentsList(dataset.webhooks)}
 
 <h2 id="callbacks">Callbacks</h2>
 ${dataset.webhooks
