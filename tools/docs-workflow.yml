@@ -31,14 +31,16 @@ jobs:
           node-version: "20"
 
       - name: Fetch the shared dataset and generator
+        # The whole pipeline is fetched, so a new module the generator
+        # imports can never break the deploy.
         run: |
           set -euo pipefail
-          base="https://raw.githubusercontent.com/TeamTrustBridge/paga/main"
-          mkdir -p .docs-pipeline/data .docs-pipeline/tools/assets
-          curl -fsSL "$base/data/operations.json" -o .docs-pipeline/data/operations.json
-          curl -fsSL "$base/tools/build-docs.mjs" -o .docs-pipeline/tools/build-docs.mjs
-          curl -fsSL "$base/tools/assets/style.css" -o .docs-pipeline/tools/assets/style.css
-          curl -fsSL "$base/tools/assets/script.js" -o .docs-pipeline/tools/assets/script.js
+          curl -fsSL "https://github.com/TeamTrustBridge/paga/archive/refs/heads/main.tar.gz" -o pipeline.tar.gz
+          tar -xzf pipeline.tar.gz
+          mkdir -p .docs-pipeline
+          cp -R paga-main/data .docs-pipeline/data
+          cp -R paga-main/tools .docs-pipeline/tools
+          rm -rf paga-main pipeline.tar.gz
 
       - name: Generate the site
         run: node .docs-pipeline/tools/build-docs.mjs --language __LANGUAGE__ --out docs
