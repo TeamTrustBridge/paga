@@ -1,0 +1,8 @@
+# The three SDKs live in their own repositories.
+paga-python/
+paga-ts/
+paga-rs/
+
+# Scratch space
+*.tgz
+*.crate
