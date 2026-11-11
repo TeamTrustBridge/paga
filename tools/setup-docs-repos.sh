@@ -43,18 +43,11 @@ Unofficial documentation website for the [\`${package}\`](${sdk_repo}) SDK for t
 The site is published by GitHub Pages from \`docs/\` on \`main\`, by
 \`.github/workflows/docs.yml\`. The workflow fetches the dataset and generator
 from [TeamTrustBridge/paga](https://github.com/TeamTrustBridge/paga), so the
-site always reflects the canonical data.
+site always reflects the canonical data, and commits back what it deployed.
 
-GitHub Pages has to be enabled for the organisation first: **Settings → Pages
-→ Build and deployment → Source → GitHub Actions**. The workflow enables it
-per repository; the organisation-level switch is what it needs.
-
-Until that is set, the site can be read straight from the repository, or
-through a CDN that serves the HTML with the right content type:
-
-\`\`\`
-https://raw.githack.com/TeamTrustBridge/${repo}/main/docs/index.html
-\`\`\`
+Pages is enabled per repository (**Settings → Pages → Source → GitHub
+Actions**); the workflow enables it too, so a fresh repository only needs the
+repository-level switch.
 
 ## How it is built
 
