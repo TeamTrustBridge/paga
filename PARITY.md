@@ -5,7 +5,7 @@ three; the `Method` column names the method as it appears in each SDK.
 
 - `paga-python` — <https://github.com/TeamTrustBridge/paga-python>
 - `paga-ts` — <https://github.com/TeamTrustBridge/paga-ts>
-- `paga-rs` — <https://github.com/TeamTrustBridge/paga-rs>
+- `paga-rs` — <https://github.com/TeamTrustBridge/paga-rs> (crates.io package `paga-rs`, Rust path `paga`)
 
 ## How the three SDKs are organised
 

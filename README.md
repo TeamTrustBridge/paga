@@ -10,18 +10,33 @@ one per language, all tracking the same operation set.
 >
 > Use at your own risk, and report issues here rather than to Paga.
 
-| SDK | Package | Repository |
-|---|---|---|
-| Python | [`paga-python`](https://pypi.org/project/paga-python/) | [TeamTrustBridge/paga-python](https://github.com/TeamTrustBridge/paga-python) |
-| TypeScript | `paga-ts` | [TeamTrustBridge/paga-ts](https://github.com/TeamTrustBridge/paga-ts) |
-| Rust | `paga` | [TeamTrustBridge/paga-rs](https://github.com/TeamTrustBridge/paga-rs) |
+| SDK | Package | Import | Repository |
+|---|---|---|---|
+| Python | [`paga-python`](https://pypi.org/project/paga-python/) | `import paga` | [TeamTrustBridge/paga-python](https://github.com/TeamTrustBridge/paga-python) |
+| TypeScript | `paga-ts` | `import ... from "paga"` | [TeamTrustBridge/paga-ts](https://github.com/TeamTrustBridge/paga-ts) |
+| Rust | [`paga-rs`](https://crates.io/crates/paga-rs) | `use paga::` | [TeamTrustBridge/paga-rs](https://github.com/TeamTrustBridge/paga-rs) |
+
+Each package is named after its language, so the three can be published side
+by side on the same registry. The import path is the same short name in all
+three: `paga`.
 
 ## Install
 
 ```bash
 pip install paga-python     # Python
 npm install paga-ts          # TypeScript
-cargo add paga               # Rust
+cargo add paga-rs            # Rust
+```
+
+All three are imported as `paga`. In TypeScript, alias the package in your
+`package.json` to get the short import name:
+
+```json
+{
+  "dependencies": {
+    "paga": "npm:paga-ts@^0.1.0"
+  }
+}
 ```
 
 ## What is covered
