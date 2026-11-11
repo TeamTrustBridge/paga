@@ -1,0 +1,2002 @@
+{
+  "$comment": "The Paga Engine SDK operation dataset. Authored in paga/data, served as paga-<lang>-docs/docs/operations.json.",
+  "version": 1,
+  "groups": [
+    {
+      "id": "accept-payments",
+      "title": "Accept payments",
+      "description": "Collect money from a customer."
+    },
+    {
+      "id": "make-payments",
+      "title": "Make payments",
+      "description": "Send money out to a customer, a biller or a network."
+    },
+    {
+      "id": "manage-accounts",
+      "title": "Manage accounts",
+      "description": "Your own account, your customers' accounts, and the customers themselves."
+    }
+  ],
+  "sections": [
+    {
+      "id": "checkout",
+      "title": "Checkout",
+      "navTitle": "Checkout",
+      "group": "accept-payments",
+      "description": "Take a card or bank payment on a Paga-hosted page. The customer is redirected to Paga, pays, and Paga notifies your server.",
+      "intro": "Checkout is the hosted flow: you send the customer to a Paga page and Paga handles the payment instrument. Use it when you want Paga to own the payment UI rather than building your own."
+    },
+    {
+      "id": "collection",
+      "title": "Dynamic virtual account, Bank USSD, Paga wallet and USD bank transfer",
+      "navTitle": "Collection",
+      "group": "accept-payments",
+      "description": "Collect money from a customer with a payment request. The same request serves the virtual account, USSD, wallet and USD flows — you pick the method.",
+      "intro": "A payment request tells Paga to collect a specific amount from a specific customer. How the customer pays is up to you: a one-time virtual account number, a USSD prompt, their Paga wallet, or a USD bank transfer."
+    },
+    {
+      "id": "refunds",
+      "title": "Refunds",
+      "navTitle": "Refunds",
+      "group": "accept-payments",
+      "description": "Refund a payment in full or in part, or cancel one that was never paid.",
+      "intro": "A refund returns money to the customer. Cancelling a payment request that has not been paid uses the same endpoint — Paga decides which it is from the request's state."
+    },
+    {
+      "id": "direct-debit",
+      "title": "Direct Debit (Open Banking)",
+      "navTitle": "Direct Debit",
+      "group": "accept-payments",
+      "description": "Take a standing authorisation to debit a customer's bank account, then charge against it.",
+      "intro": "Direct Debit lets a customer authorise you to debit their bank account. You set the mandate up, wait for the bank to approve it, then charge it as often as the mandate allows."
+    },
+    {
+      "id": "money-transfer",
+      "title": "Money Transfer",
+      "navTitle": "Money Transfer",
+      "group": "make-payments",
+      "description": "Send money out of your business balance to a bank account or a Paga wallet.",
+      "intro": "A money transfer moves money from your business balance to somebody else. You can validate the destination first, send in bulk, and check the status afterwards."
+    },
+    {
+      "id": "airtime",
+      "title": "Airtime and data",
+      "navTitle": "Airtime and data",
+      "group": "make-payments",
+      "description": "Top up a phone with airtime or a data bundle.",
+      "intro": "Buy airtime or data for a phone number from your business balance. For data, pick the bundle first — the amount must match the bundle's price exactly."
+    },
+    {
+      "id": "bill-payment",
+      "title": "Bill payment (VAS)",
+      "navTitle": "Bill payment",
+      "group": "make-payments",
+      "description": "Pay a biller on behalf of a customer: electricity, water, TV, airtime and more.",
+      "intro": "Bill payment takes a customer's account number, confirms it with the biller, and pays. Find the biller, pick the service, validate the customer, then pay."
+    },
+    {
+      "id": "status",
+      "title": "Check the transaction status",
+      "navTitle": "Transaction status",
+      "group": "make-payments",
+      "description": "Find out what happened to a money transfer, airtime purchase or bill payment you already sent.",
+      "intro": "Some operations have no callback. The transaction status endpoint tells you where a transaction got to, and it is what you use to resolve an unknown outcome."
+    },
+    {
+      "id": "business-account",
+      "title": "Your business account",
+      "navTitle": "Business account",
+      "group": "manage-accounts",
+      "description": "Your own balance, transaction history, merchant onboarding and cash dispensing.",
+      "intro": "The business account is your own. Read the balance before a payout run, reconcile against the transaction history, and onboard the merchants you aggregate."
+    },
+    {
+      "id": "subsidiary",
+      "title": "Subsidiary accounts",
+      "navTitle": "Subsidiary accounts",
+      "group": "manage-accounts",
+      "description": "Paga accounts for your customers, held on your behalf. Issue, hold and move money on their account.",
+      "intro": "A subsidiary account is a Paga account for one of your customers. You can hold their money, move it between accounts, and set it up to sweep straight into a bank account."
+    },
+    {
+      "id": "persistent",
+      "title": "Persistent payment accounts",
+      "navTitle": "Persistent accounts",
+      "group": "manage-accounts",
+      "description": "A standing instruction that lets a customer pay you repeatedly from the same account.",
+      "intro": "A persistent payment account is the customer-side equivalent of a direct debit mandate, but from the collection side: the customer authorises a debit, you keep taking it."
+    },
+    {
+      "id": "customers",
+      "title": "Customer registration and KYC",
+      "navTitle": "Customers",
+      "group": "manage-accounts",
+      "description": "Open a Paga account for a customer, with identity documents if you need them.",
+      "intro": "Registering a customer opens a Paga account for them on your business account. The KYC variants upload photographs as well."
+    }
+  ],
+  "operations": [
+    {
+      "id": "verify-charge",
+      "section": "checkout",
+      "name": "Verify a charge",
+      "operation": "Checkout - Verify a charge",
+      "endpoint": "POST /checkout/transaction/verify",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [],
+      "description": "Confirms a Checkout payment from your server at any time, using its `paymentReference`. Uses HTTP Basic only — it sends no `hash` header.",
+      "notes": [
+        "`status_code` `0` means paid, `2` means pending.",
+        "A pending charge is a legitimate answer, so the response is returned rather than raised."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_charge",
+          "example": "verified = await client.verify_charge(\n    payment_reference=\"PAY-2026-0311\",\n    public_key=\"YOUR_PUBLIC_KEY\",\n    amount=50,\n)\nif verified.status_code == 0:\n    print(\"paid\")"
+        },
+        "typescript": {
+          "method": "verifyCharge",
+          "example": "const verified = await client.verifyCharge({\n  paymentReference: \"PAY-2026-0311\",\n  publicKey: \"YOUR_PUBLIC_KEY\",\n  amount: 50,\n});\nif (verified.status_code === 0) {\n  console.log(\"paid\");\n}"
+        },
+        "rust": {
+          "method": "verify_charge",
+          "example": "let verified = client\n    .verify_charge(\"PAY-2026-0311\", \"YOUR_PUBLIC_KEY\", 50.0)\n    .await?;\nif verified.status_code == Some(0) {\n    println!(\"paid\");\n}"
+        }
+      }
+    },
+    {
+      "id": "create-payment",
+      "section": "collection",
+      "name": "Create a payment request",
+      "operation": "Dynamic virtual account - Create a payment request",
+      "endpoint": "POST /paymentRequest",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "currency",
+        "payer.phoneNumber",
+        "payer.email"
+      ],
+      "description": "Creates a payment request. The customer pays via the payment methods you send, and Paga calls your callback when the payment completes.",
+      "notes": [
+        "The same operation serves the Bank USSD, Paga wallet and USD bank transfer flows — pick the flow with `paymentMethods`.",
+        "`payer.email` takes part in the hash even when you omit it."
+      ],
+      "languages": {
+        "python": {
+          "method": "create_payment",
+          "example": "payment = await client.create_payment(\n    reference_number=\"ORD-2026-0187\",\n    amount=50,\n    payer_name=\"Bello Ramon\",\n    payer_phone_number=\"08064343187\",\n    payee_name=\"Your business name\",\n    payer_email=\"customer@example.com\",\n    call_back_url=\"https://yourstore.com/webhooks/paga\",\n    payment_methods=[\"BANK_TRANSFER\"],\n)"
+        },
+        "typescript": {
+          "method": "createPayment",
+          "example": "const payment = await client.createPayment({\n  referenceNumber: \"ORD-2026-0187\",\n  amount: 50,\n  payerName: \"Bello Ramon\",\n  payerPhoneNumber: \"08064343187\",\n  payeeName: \"Your business name\",\n  payerEmail: \"customer@example.com\",\n  callBackUrl: \"https://yourstore.com/webhooks/paga\",\n  paymentMethods: [\"BANK_TRANSFER\"],\n});"
+        },
+        "rust": {
+          "method": "create_payment",
+          "example": "let payment = client\n    .create_payment(CreatePayment::new(\n        \"ORD-2026-0187\",\n        50.0,\n        \"Bello Ramon\",\n        \"08064343187\",\n        \"Your business name\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-payment-status",
+      "section": "collection",
+      "name": "Check payment status",
+      "operation": "Dynamic virtual account - Check payment status",
+      "endpoint": "POST /status",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the status of a payment request. The outer `statusCode` only says whether the status request worked; the payment's own status is in `data.statusCode`.",
+      "notes": [
+        "`data.statusCode` of `\"0\"` means the payment was paid."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_payment_status",
+          "example": "status = await client.get_payment_status(reference_number=\"ORD-2026-0187\")\nif status.data and status.data.statusCode == \"0\":\n    print(\"paid\")"
+        },
+        "typescript": {
+          "method": "getPaymentStatus",
+          "example": "const status = await client.getPaymentStatus({\n  referenceNumber: \"ORD-2026-0187\",\n});\nif (status.data?.statusCode === \"0\") {\n  console.log(\"paid\");\n}"
+        },
+        "rust": {
+          "method": "get_payment_status",
+          "example": "let status = client.get_payment_status(\"ORD-2026-0187\").await?;\nif status.data.as_ref().and_then(|d| d.status_code.as_deref()) == Some(\"0\") {\n    println!(\"paid\");\n}"
+        }
+      }
+    },
+    {
+      "id": "get-collect-banks",
+      "section": "collection",
+      "name": "List the customer's banks",
+      "operation": "Bank USSD - Get the customer's bank",
+      "endpoint": "POST /banks",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Lists the banks available for a Bank USSD payment. Send a bank's `uuid` as `payer.bankId` when creating a payment request, or as `autoSweep.bankPublicId` for subsidiary accounts.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "get_collect_banks",
+          "example": "banks = await client.get_collect_banks(reference_number=\"REF-000001\")\nfor bank in banks.banks or []:\n    print(bank.name, bank.uuid)"
+        },
+        "typescript": {
+          "method": "getCollectBanks",
+          "example": "const banks = await client.getCollectBanks({ referenceNumber: \"REF-000001\" });\nfor (const bank of banks.banks ?? []) {\n  console.log(bank.name, bank.uuid);\n}"
+        },
+        "rust": {
+          "method": "get_collect_banks",
+          "example": "let banks = client.get_collect_banks(\"REF-000001\").await?;\nfor bank in banks.banks.unwrap_or_default() {\n    println!(\"{:?} {:?}\", bank.name, bank.uuid);\n}"
+        }
+      }
+    },
+    {
+      "id": "get-usd-payment-status",
+      "section": "collection",
+      "name": "Check USD payment status",
+      "operation": "Bank transfer (ACH, Wire and Swift) - Check payment status",
+      "endpoint": "POST /status",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "paymentCurrency"
+      ],
+      "description": "Returns the status of a USD payment request. Unlike the other `/status` operations, this one signs the currency as well as the reference number.",
+      "notes": [
+        "`data.statusCode` of `\"1\"` means the payment is still pending."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_usd_payment_status",
+          "example": "status = await client.get_usd_payment_status(\n    reference_number=\"ORD-2026-0187\",\n    payment_currency=\"USD\",\n)"
+        },
+        "typescript": {
+          "method": "getUsdPaymentStatus",
+          "example": "const status = await client.getUsdPaymentStatus({\n  referenceNumber: \"ORD-2026-0187\",\n  paymentCurrency: \"USD\",\n});"
+        },
+        "rust": {
+          "method": "get_usd_payment_status",
+          "example": "let status = client\n    .get_usd_payment_status(\"ORD-2026-0187\", \"USD\")\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-payment-request-history",
+      "section": "collection",
+      "name": "Payment request history",
+      "operation": "Collect API - Payment request history",
+      "endpoint": "POST /history",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the history of your payment requests.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "get_payment_request_history",
+          "example": "history = await client.get_payment_request_history(reference_number=\"REF-000001\")"
+        },
+        "typescript": {
+          "method": "getPaymentRequestHistory",
+          "example": "const history = await client.getPaymentRequestHistory({\n  referenceNumber: \"REF-000001\",\n});"
+        },
+        "rust": {
+          "method": "get_payment_request_history",
+          "example": "let history = client.get_payment_request_history(\"REF-000001\").await?;"
+        }
+      }
+    },
+    {
+      "id": "refund-payment",
+      "section": "refunds",
+      "name": "Refund or cancel a payment request",
+      "operation": "Refunds - Refund or cancel a payment request",
+      "endpoint": "POST /refund/v2",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "refundAmount"
+      ],
+      "description": "Refunds a paid payment request in full or in part, or cancels one that has not been paid.",
+      "notes": [
+        "Send one request per partial refund, each with its own `referenceNumber`.",
+        "Reusing a `referenceNumber` returns status code `102` and never refunds twice."
+      ],
+      "languages": {
+        "python": {
+          "method": "refund_payment",
+          "example": "refund = await client.refund_payment(\n    reference_number=\"RFD-2026-0031\",\n    payment_request_reference=\"ORD-2026-0187\",\n    refund_amount=50,\n    reason=\"Item out of stock\",\n)"
+        },
+        "typescript": {
+          "method": "refundPayment",
+          "example": "const refund = await client.refundPayment({\n  referenceNumber: \"RFD-2026-0031\",\n  paymentRequestReference: \"ORD-2026-0187\",\n  refundAmount: 50,\n  reason: \"Item out of stock\",\n});"
+        },
+        "rust": {
+          "method": "refund_payment",
+          "example": "let refund = client\n    .refund_payment(RefundPayment::new(\"RFD-2026-0031\", \"ORD-2026-0187\", 50.0))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-refund-status",
+      "section": "refunds",
+      "name": "Check refund status",
+      "operation": "Refunds - Check refund status",
+      "endpoint": "POST /status",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Checks whether a payment request was refunded. Call it with the **original** payment request's `referenceNumber`, not the refund's.",
+      "notes": [
+        "`data.refundStatus` becomes `\"refunded\"` once the refund is made."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_refund_status",
+          "example": "status = await client.get_refund_status(reference_number=\"ORD-2026-0187\")\nif status.isRefunded:\n    print(\"refunded\")"
+        },
+        "typescript": {
+          "method": "getRefundStatus",
+          "example": "const status = await client.getRefundStatus({\n  referenceNumber: \"ORD-2026-0187\",\n});\nif (status.data?.refundStatus === \"refunded\") {\n  console.log(\"refunded\");\n}"
+        },
+        "rust": {
+          "method": "get_refund_status",
+          "example": "let status = client.get_refund_status(\"ORD-2026-0187\").await?;\nif status.is_refunded() {\n    println!(\"refunded\");\n}"
+        }
+      }
+    },
+    {
+      "id": "start-direct-debit-session",
+      "section": "direct-debit",
+      "name": "Start a hosted set-up session",
+      "operation": "Direct Debit - Start a hosted set-up session",
+      "endpoint": "POST /checkout/charge-process/start",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [],
+      "description": "Creates a hosted session and returns the `checkoutUrl` to redirect your customer to. This endpoint uses HTTP Basic only — it sends no `hash` header.",
+      "notes": [
+        "The session expiry and payment expiry are strings of seconds."
+      ],
+      "languages": {
+        "python": {
+          "method": "start_direct_debit_session",
+          "example": "session = await client.start_direct_debit_session(\n    reference_number=\"DD-2026-0001\",\n    account_reference=\"CUST-000184-WALLET\",\n    amount_limit=50000,\n    callback_url=\"https://yourstore.com/webhooks/mandate\",\n)\nprint(session.checkoutUrl)"
+        },
+        "typescript": {
+          "method": "startDirectDebitSession",
+          "example": "const session = await client.startDirectDebitSession({\n  referenceNumber: \"DD-2026-0001\",\n  accountReference: \"CUST-000184-WALLET\",\n  amountLimit: 50000,\n  callbackUrl: \"https://yourstore.com/webhooks/mandate\",\n});\nconsole.log(session.data?.checkoutUrl);"
+        },
+        "rust": {
+          "method": "start_direct_debit_session",
+          "example": "let session = client\n    .start_direct_debit_session(StartDirectDebitSession::new(\n        \"DD-2026-0001\",\n        \"CUST-000184-WALLET\",\n        50_000.0,\n        \"https://yourstore.com/webhooks/mandate\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "create-direct-debit-mandate",
+      "section": "direct-debit",
+      "name": "Set up a mandate by API",
+      "operation": "Direct Debit - Set up a mandate by API",
+      "endpoint": "POST /paymentRequest",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "currency",
+        "payer.phoneNumber",
+        "payer.email"
+      ],
+      "description": "Creates a payment request with `paymentMethods` set to `[\"DIRECT_DEBIT\"]`, so the customer authorises you to debit their bank account.",
+      "notes": [
+        "The authorisation transfer must come from mobile banking, internet banking or a branch — not from POS, USSD or ATM.",
+        "`payerCollectionFeeShare` and `payeeCollectionFeeShare` must sum to 1.0."
+      ],
+      "languages": {
+        "python": {
+          "method": "create_direct_debit_mandate",
+          "example": "mandate = await client.create_direct_debit_mandate(\n    reference_number=\"DD-2026-0001\",\n    amount=5000,\n    payer_name=\"Bello Ramon\",\n    payer_phone_number=\"08064343187\",\n    payee_name=\"Your business name\",\n    account_reference=\"CUST-000184-WALLET\",\n    payer_email=\"customer@example.com\",\n    call_back_url=\"https://yourstore.com/webhooks/mandate\",\n)"
+        },
+        "typescript": {
+          "method": "createDirectDebitMandate",
+          "example": "const mandate = await client.createDirectDebitMandate({\n  referenceNumber: \"DD-2026-0001\",\n  amount: 5000,\n  payerName: \"Bello Ramon\",\n  payerPhoneNumber: \"08064343187\",\n  payeeName: \"Your business name\",\n  accountReference: \"CUST-000184-WALLET\",\n  payerEmail: \"customer@example.com\",\n  callBackUrl: \"https://yourstore.com/webhooks/mandate\",\n});"
+        },
+        "rust": {
+          "method": "create_direct_debit_mandate",
+          "example": "let mandate = client\n    .create_direct_debit_mandate(CreateDirectDebitMandate::new(\n        \"DD-2026-0001\",\n        5000.0,\n        \"Bello Ramon\",\n        \"08064343187\",\n        \"Your business name\",\n        \"CUST-000184-WALLET\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-mandate-status",
+      "section": "direct-debit",
+      "name": "Check mandate status",
+      "operation": "Direct Debit - Check mandate status",
+      "endpoint": "POST /status",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns a mandate's status.",
+      "notes": [
+        "`data.statusCode` stays `\"1\"` / `\"pending\"` forever — it tells you nothing.",
+        "Read `data.additionalData.mandate[].ProcessStatusId` instead: `PENDING`, `VERIFIED`, `APPROVED` or `REJECTED`. Charge only when it is `APPROVED`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_mandate_status",
+          "example": "status = await client.get_mandate_status(reference_number=\"DD-2026-0001\")\nif status.isApproved:\n    print(\"ready to charge\")"
+        },
+        "typescript": {
+          "method": "getMandateStatus",
+          "example": "const status = await client.getMandateStatus({\n  referenceNumber: \"DD-2026-0001\",\n});\nif (status.data?.additionalData?.mandate?.[0]?.ProcessStatusId === \"APPROVED\") {\n  console.log(\"ready to charge\");\n}"
+        },
+        "rust": {
+          "method": "get_mandate_status",
+          "example": "let status = client.get_mandate_status(\"DD-2026-0001\").await?;\nif status.is_approved() {\n    println!(\"ready to charge\");\n}"
+        }
+      }
+    },
+    {
+      "id": "charge-mandate",
+      "section": "direct-debit",
+      "name": "Charge the mandate",
+      "operation": "Direct Debit - Charge the mandate",
+      "endpoint": "POST /chargeDebitMandate",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "accountReference"
+      ],
+      "description": "Debits an approved mandate for any amount up to its limit.",
+      "notes": [
+        "A successful response means the charge was **accepted**, not completed — fulfil only once the charge callback confirms it."
+      ],
+      "languages": {
+        "python": {
+          "method": "charge_mandate",
+          "example": "charge = await client.charge_mandate(\n    reference_number=\"DD-CHARGE-0001\",\n    amount=600,\n    account_reference=\"CUST-000184-WALLET\",\n)"
+        },
+        "typescript": {
+          "method": "chargeMandate",
+          "example": "const charge = await client.chargeMandate({\n  referenceNumber: \"DD-CHARGE-0001\",\n  amount: 600,\n  accountReference: \"CUST-000184-WALLET\",\n});"
+        },
+        "rust": {
+          "method": "charge_mandate",
+          "example": "let charge = client\n    .charge_mandate(ChargeMandate::new(\n        \"DD-CHARGE-0001\",\n        600.0,\n        \"CUST-000184-WALLET\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-charge-mandate-status",
+      "section": "direct-debit",
+      "name": "Check charge status",
+      "operation": "Direct Debit - Check charge status",
+      "endpoint": "POST /getChargeMandateStatus",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the status of a mandate charge, using the charge's own `referenceNumber`.",
+      "notes": [
+        "`data.statusCode` is `0` charged, `1` pending, `-1` invalid and `-4` unknown."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_charge_mandate_status",
+          "example": "status = await client.get_charge_mandate_status(reference_number=\"DD-CHARGE-0001\")\nif status.chargeStatus == 0:\n    print(\"charged\")"
+        },
+        "typescript": {
+          "method": "getChargeMandateStatus",
+          "example": "const status = await client.getChargeMandateStatus({\n  referenceNumber: \"DD-CHARGE-0001\",\n});\nif (status.data?.statusCode === 0) {\n  console.log(\"charged\");\n}"
+        },
+        "rust": {
+          "method": "get_charge_mandate_status",
+          "example": "let status = client.get_charge_mandate_status(\"DD-CHARGE-0001\").await?;\nif status.charge_status() == Some(0) {\n    println!(\"charged\");\n}"
+        }
+      }
+    },
+    {
+      "id": "disable-mandate",
+      "section": "direct-debit",
+      "name": "Disable a mandate",
+      "operation": "Direct Debit - Disable a mandate",
+      "endpoint": "POST /disableMandate",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountReference"
+      ],
+      "description": "Stops all future charges on a mandate. Its `ProcessStatusId` then becomes `REJECTED`, and it can never be charged again.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "disable_mandate",
+          "example": "await client.disable_mandate(\n    reference_number=\"DD-DIS-0001\",\n    account_reference=\"CUST-000184-WALLET\",\n)"
+        },
+        "typescript": {
+          "method": "disableMandate",
+          "example": "await client.disableMandate({\n  referenceNumber: \"DD-DIS-0001\",\n  accountReference: \"CUST-000184-WALLET\",\n});"
+        },
+        "rust": {
+          "method": "disable_mandate",
+          "example": "client\n    .disable_mandate(DisableMandate::new(\n        \"DD-DIS-0001\",\n        \"CUST-000184-WALLET\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-banks",
+      "section": "money-transfer",
+      "name": "List institutions you can pay",
+      "operation": "Money transfer - Get the bank's UUID",
+      "endpoint": "POST /getBanks",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Lists every institution money can be sent to, with the `uuid` you send as `destinationBankUUID`.",
+      "notes": [
+        "UUIDs never change, but new institutions are added every month — cache the list and refresh it weekly or monthly.",
+        "To send to a Paga wallet, use Paga's UUID `AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_banks",
+          "example": "banks = await client.get_banks(reference_number=\"REF-000001\")\nfor bank in banks.banks or []:\n    print(bank.name, bank.uuid)"
+        },
+        "typescript": {
+          "method": "getBanks",
+          "example": "const banks = await client.getBanks({ referenceNumber: \"REF-000001\" });\nfor (const bank of banks.banks ?? []) {\n  console.log(bank.name, bank.uuid);\n}"
+        },
+        "rust": {
+          "method": "get_banks",
+          "example": "let banks = client.get_banks(\"REF-000001\").await?;\nfor bank in banks.banks.unwrap_or_default() {\n    println!(\"{:?} {:?}\", bank.name, bank.uuid);\n}"
+        }
+      }
+    },
+    {
+      "id": "validate-deposit-to-bank",
+      "section": "money-transfer",
+      "name": "Validate the destination account",
+      "operation": "Money transfer - Validate the account",
+      "endpoint": "POST /validateDepositToBank",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationBankUUID",
+        "destinationBankAccountNumber"
+      ],
+      "description": "Confirms the account exists and returns the account holder's name and the fee, before any money moves.",
+      "notes": [
+        "Send `amount` exactly as you will send it later: `\"5000.00\"` and `\"5000\"` sign differently."
+      ],
+      "languages": {
+        "python": {
+          "method": "validate_deposit_to_bank",
+          "example": "validation = await client.validate_deposit_to_bank(\n    reference_number=\"REF-000002\",\n    amount=\"5000.00\",\n    destination_bank_uuid=\"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n    destination_bank_account_number=\"0000000000\",\n)\nprint(validation.destinationAccountHolderNameAtBank, validation.fee)"
+        },
+        "typescript": {
+          "method": "validateDepositToBank",
+          "example": "const validation = await client.validateDepositToBank({\n  referenceNumber: \"REF-000002\",\n  amount: \"5000.00\",\n  destinationBankUUID: \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n  destinationBankAccountNumber: \"0000000000\",\n});\nconsole.log(validation.destinationAccountHolderNameAtBank, validation.fee);"
+        },
+        "rust": {
+          "method": "validate_deposit_to_bank",
+          "example": "let validation = client\n    .validate_deposit_to_bank(ValidateDepositToBank::new(\n        \"REF-000002\",\n        \"5000.00\",\n        \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n        \"0000000000\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "send-money",
+      "section": "money-transfer",
+      "name": "Send money to a bank account",
+      "operation": "Money transfer - Send the money",
+      "endpoint": "POST /depositToBank",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationBankUUID",
+        "destinationBankAccountNumber"
+      ],
+      "description": "Sends money from the business balance to a bank account, or to a Paga wallet using Paga's UUID.",
+      "notes": [
+        "Send `amount` as a string (e.g. `\"5000.00\"`) — it is signed verbatim.",
+        "There is no callback for the outcome; use the transaction status endpoint."
+      ],
+      "languages": {
+        "python": {
+          "method": "send_money",
+          "example": "transfer = await client.send_money(\n    reference_number=\"PAY-2026-0311\",\n    amount=\"5000.00\",\n    destination_bank_uuid=\"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n    destination_bank_account_number=\"0000000000\",\n    remarks=\"Salary for June\",\n)"
+        },
+        "typescript": {
+          "method": "sendMoney",
+          "example": "const transfer = await client.sendMoney({\n  referenceNumber: \"PAY-2026-0311\",\n  amount: \"5000.00\",\n  destinationBankUUID: \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n  destinationBankAccountNumber: \"0000000000\",\n  remarks: \"Salary for June\",\n});"
+        },
+        "rust": {
+          "method": "send_money",
+          "example": "let transfer = client\n    .send_money(SendMoney::new(\n        \"PAY-2026-0311\",\n        \"5000.00\",\n        \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n        \"0000000000\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "transfer-to-paga-wallet",
+      "section": "money-transfer",
+      "name": "Send money to a Paga wallet",
+      "operation": "Business API - Money transfer to a Paga wallet",
+      "endpoint": "POST /moneyTransfer",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationAccount"
+      ],
+      "description": "Sends money from the business balance to a Paga user, identified by their phone number, nickname or account number.",
+      "notes": [
+        "`referenceNumber` must be at most 50 characters."
+      ],
+      "languages": {
+        "python": {
+          "method": "transfer_to_paga_wallet",
+          "example": "transfer = await client.transfer_to_paga_wallet(\n    reference_number=\"PAY-2026-0312\",\n    amount=5000,\n    destination_account=\"08064343187\",\n)"
+        },
+        "typescript": {
+          "method": "transferToPagaWallet",
+          "example": "const transfer = await client.transferToPagaWallet({\n  referenceNumber: \"PAY-2026-0312\",\n  amount: 5000,\n  destinationAccount: \"08064343187\",\n});"
+        },
+        "rust": {
+          "method": "transfer_to_paga_wallet",
+          "example": "let transfer = client\n    .transfer_to_paga_wallet(TransferToPagaWallet::new(\n        \"PAY-2026-0312\",\n        5000.0,\n        \"08064343187\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "validate-money-transfer",
+      "section": "money-transfer",
+      "name": "Validate a Paga wallet transfer",
+      "operation": "Business API - Validate a money transfer",
+      "endpoint": "POST /validateMoneyTransfer",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationAccount"
+      ],
+      "description": "Confirms the recipient exists and returns their name, registration status, KYC level and the fee, before any money moves.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "validate_money_transfer",
+          "example": "validation = await client.validate_money_transfer(\n    reference_number=\"REF-000003\",\n    amount=5000,\n    destination_account=\"08064343187\",\n)\nprint(validation.recipientAccountHolderName, validation.fee)"
+        },
+        "typescript": {
+          "method": "validateMoneyTransfer",
+          "example": "const validation = await client.validateMoneyTransfer({\n  referenceNumber: \"REF-000003\",\n  amount: 5000,\n  destinationAccount: \"08064343187\",\n});\nconsole.log(validation.recipientAccountHolderName, validation.fee);"
+        },
+        "rust": {
+          "method": "validate_money_transfer",
+          "example": "let validation = client\n    .validate_money_transfer(ValidateMoneyTransfer::new(\n        \"REF-000003\",\n        5000.0,\n        \"08064343187\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "send-bulk-money-transfer",
+      "section": "money-transfer",
+      "name": "Bulk money transfer",
+      "operation": "Business API - Bulk money transfer",
+      "endpoint": "POST /moneyTransferBulk",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationAccount",
+        "itemCount"
+      ],
+      "description": "Sends up to 300 money transfers in one call.",
+      "notes": [
+        "Paga hashes the **first item's** reference number, amount and destination account, followed by the total number of items — the SDK does that for you.",
+        "A bulk transfer can partially succeed, so check every entry in `results`."
+      ],
+      "languages": {
+        "python": {
+          "method": "send_bulk_money_transfer",
+          "example": "bulk = await client.send_bulk_money_transfer(\n    items=[\n        {\n            \"referenceNumber\": \"ITEM-1\",\n            \"amount\": 100,\n            \"destinationAccount\": \"08064343187\",\n        },\n        {\n            \"referenceNumber\": \"ITEM-2\",\n            \"amount\": 200,\n            \"destinationAccount\": \"08064343188\",\n        },\n    ],\n    bulk_reference_number=\"BULK-2026-0001\",\n)"
+        },
+        "typescript": {
+          "method": "sendBulkMoneyTransfer",
+          "example": "const bulk = await client.sendBulkMoneyTransfer({\n  items: [\n    { referenceNumber: \"ITEM-1\", amount: 100, destinationAccount: \"08064343187\" },\n    { referenceNumber: \"ITEM-2\", amount: 200, destinationAccount: \"08064343188\" },\n  ],\n  bulkReferenceNumber: \"BULK-2026-0001\",\n});"
+        },
+        "rust": {
+          "method": "send_bulk_money_transfer",
+          "example": "let bulk = client\n    .send_bulk_money_transfer(SendBulkMoneyTransfer::new(vec![\n        BulkTransferItem::new(\"ITEM-1\", 100.0, \"08064343187\"),\n        BulkTransferItem::new(\"ITEM-2\", 200.0, \"08064343188\"),\n    ]))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-transaction-status",
+      "section": "status",
+      "name": "Check the transaction status",
+      "operation": "Money transfer / Airtime / Bill payment - Check the transaction status",
+      "endpoint": "POST /transactionStatus",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Checks what happened to a transaction you already sent. It covers money transfers, airtime purchases and bill payments.",
+      "notes": [
+        "Only the last 48 hours are covered.",
+        "After a timeout or an ambiguous response, wait at least 5 seconds before the first check.",
+        "The `status` field is human-readable and may be reworded — branch on `responseCode`, not on `status`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_transaction_status",
+          "example": "status = await client.get_transaction_status(reference_number=\"PAY-2026-0311\")\nif status.responseCode == 0:\n    print(\"settled\")"
+        },
+        "typescript": {
+          "method": "getTransactionStatus",
+          "example": "const status = await client.getTransactionStatus({\n  referenceNumber: \"PAY-2026-0311\",\n});\nif (status.responseCode === 0) {\n  console.log(\"settled\");\n}"
+        },
+        "rust": {
+          "method": "get_transaction_status",
+          "example": "let status = client\n    .get_transaction_status(GetTransactionStatus::new(\"PAY-2026-0311\"))\n    .await?;\nif status.response_code == Some(0) {\n    println!(\"settled\");\n}"
+        }
+      }
+    },
+    {
+      "id": "get-mobile-operators",
+      "section": "airtime",
+      "name": "List mobile operators",
+      "operation": "Airtime and data - Get the mobile operator",
+      "endpoint": "POST /getMobileOperators",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Lists the networks you can top up.",
+      "notes": [
+        "Send a network's `mobileOperatorCode` as `mobileOperatorPublicId` when buying, and as `operatorPublicId` when listing data bundles.",
+        "Cache the list."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_mobile_operators",
+          "example": "operators = await client.get_mobile_operators(reference_number=\"REF-000001\")\nfor operator in operators.mobileOperator or []:\n    print(operator.name, operator.mobileOperatorCode)"
+        },
+        "typescript": {
+          "method": "getMobileOperators",
+          "example": "const operators = await client.getMobileOperators({\n  referenceNumber: \"REF-000001\",\n});\nfor (const operator of operators.mobileOperator ?? []) {\n  console.log(operator.name, operator.mobileOperatorCode);\n}"
+        },
+        "rust": {
+          "method": "get_mobile_operators",
+          "example": "let operators = client.get_mobile_operators(\"REF-000001\", None).await?;\nfor operator in operators.mobile_operator.unwrap_or_default() {\n    println!(\"{:?} {:?}\", operator.name, operator.mobile_operator_code);\n}"
+        }
+      }
+    },
+    {
+      "id": "get-data-bundles",
+      "section": "airtime",
+      "name": "List data bundles",
+      "operation": "Airtime and data - For data, pick a bundle",
+      "endpoint": "POST /getDataBundleByOperator",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "operatorPublicId"
+      ],
+      "description": "Lists a network's data bundles.",
+      "notes": [
+        "Send a bundle's `serviceId` as `mobileOperatorServiceId` and **exactly** its `servicePrice` as `amount`.",
+        "Bundles rarely change, so cache the list and refresh it monthly."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_data_bundles",
+          "example": "bundles = await client.get_data_bundles(\n    reference_number=\"REF-000001\",\n    operator_public_id=\"42419156-DD57-4737-8373-20678CD9AA29\",\n)"
+        },
+        "typescript": {
+          "method": "getDataBundles",
+          "example": "const bundles = await client.getDataBundles({\n  referenceNumber: \"REF-000001\",\n  operatorPublicId: \"42419156-DD57-4737-8373-20678CD9AA29\",\n});"
+        },
+        "rust": {
+          "method": "get_data_bundles",
+          "example": "let bundles = client\n    .get_data_bundles(\n        \"REF-000001\",\n        \"42419156-DD57-4737-8373-20678CD9AA29\",\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "buy-airtime",
+      "section": "airtime",
+      "name": "Buy airtime or data",
+      "operation": "Airtime and data - Buy the airtime or data",
+      "endpoint": "POST /airtimePurchase",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "destinationPhoneNumber"
+      ],
+      "description": "Tops up a phone with airtime or data from the business balance.",
+      "notes": [
+        "There is no callback: decide on `responseCode`, and check the transaction status if you need to.",
+        "For a data bundle, `amount` must be exactly the bundle's `servicePrice`."
+      ],
+      "languages": {
+        "python": {
+          "method": "buy_airtime",
+          "example": "purchase = await client.buy_airtime(\n    reference_number=\"AIR-2026-0042\",\n    amount=\"500\",\n    destination_phone_number=\"08063332187\",\n    mobile_operator_public_id=\"42419156-DD57-4737-8373-20678CD9AA29\",\n)"
+        },
+        "typescript": {
+          "method": "buyAirtime",
+          "example": "const purchase = await client.buyAirtime({\n  referenceNumber: \"AIR-2026-0042\",\n  amount: \"500\",\n  destinationPhoneNumber: \"08063332187\",\n  mobileOperatorPublicId: \"42419156-DD57-4737-8373-20678CD9AA29\",\n});"
+        },
+        "rust": {
+          "method": "buy_airtime",
+          "example": "let purchase = client\n    .buy_airtime(BuyAirtime::new(\n        \"AIR-2026-0042\",\n        \"500\",\n        \"08063332187\",\n        \"42419156-DD57-4737-8373-20678CD9AA29\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-merchants",
+      "section": "bill-payment",
+      "name": "List billers",
+      "operation": "Bill payment - Find the biller",
+      "endpoint": "POST /getMerchants",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Lists every biller, with the `uuid` you send as `merchantAccount`. Cache the list.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "get_merchants",
+          "example": "merchants = await client.get_merchants(reference_number=\"REF-000001\")\nfor merchant in merchants.merchants or []:\n    print(merchant.displayName, merchant.uuid)"
+        },
+        "typescript": {
+          "method": "getMerchants",
+          "example": "const merchants = await client.getMerchants({ referenceNumber: \"REF-000001\" });\nfor (const merchant of merchants.merchants ?? []) {\n  console.log(merchant.displayName, merchant.uuid);\n}"
+        },
+        "rust": {
+          "method": "get_merchants",
+          "example": "let merchants = client.get_merchants(\"REF-000001\").await?;\nfor merchant in merchants.merchants.unwrap_or_default() {\n    println!(\"{:?} {:?}\", merchant.display_name, merchant.uuid);\n}"
+        }
+      }
+    },
+    {
+      "id": "get-merchant-services",
+      "section": "bill-payment",
+      "name": "List a biller's services",
+      "operation": "Bill payment - Pick the service",
+      "endpoint": "POST /getMerchantServices",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "merchantPublicId"
+      ],
+      "description": "Lists what a biller can be paid for.",
+      "notes": [
+        "No services means any amount is allowed.",
+        "A service with `price` `0.0` means the customer chooses the amount; otherwise pay the service's `price`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_merchant_services",
+          "example": "services = await client.get_merchant_services(\n    reference_number=\"REF-000001\",\n    merchant_public_id=\"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n)"
+        },
+        "typescript": {
+          "method": "getMerchantServices",
+          "example": "const services = await client.getMerchantServices({\n  referenceNumber: \"REF-000001\",\n  merchantPublicId: \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n});"
+        },
+        "rust": {
+          "method": "get_merchant_services",
+          "example": "let services = client\n    .get_merchant_services(\n        \"REF-000001\",\n        \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-merchant-account-details",
+      "section": "bill-payment",
+      "name": "Validate the customer",
+      "operation": "Bill payment - Validate the customer",
+      "endpoint": "POST /getMerchantAccountDetails",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "merchantAccount",
+        "merchantReferenceNumber",
+        "merchantServiceProductCode"
+      ],
+      "description": "Checks a meter, smart card or account number and returns the customer's name.",
+      "notes": [
+        "If the customer chose a service, always send its `code` as `merchantServiceProductCode`.",
+        "Billers that don't need it still take part in the hash — send `\"\"` when there is no service."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_merchant_account_details",
+          "example": "customer = await client.get_merchant_account_details(\n    reference_number=\"REF-000001\",\n    merchant_account=\"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n    merchant_reference_number=\"8110411076\",\n)\nprint(customer.customerName)"
+        },
+        "typescript": {
+          "method": "getMerchantAccountDetails",
+          "example": "const customer = await client.getMerchantAccountDetails({\n  referenceNumber: \"REF-000001\",\n  merchantAccount: \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n  merchantReferenceNumber: \"8110411076\",\n});\nconsole.log(customer.customerName);"
+        },
+        "rust": {
+          "method": "get_merchant_account_details",
+          "example": "let customer = client\n    .get_merchant_account_details(\n        \"REF-000001\",\n        \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n        \"8110411076\",\n        None,\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "pay-bill",
+      "section": "bill-payment",
+      "name": "Pay the bill",
+      "operation": "Bill payment - Pay the bill",
+      "endpoint": "POST /merchantPayment",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "merchantAccount",
+        "merchantReferenceNumber"
+      ],
+      "description": "Pays a bill from the business balance.",
+      "notes": [
+        "There is no callback: decide on `responseCode`.",
+        "`integrationStatus` is for information only."
+      ],
+      "languages": {
+        "python": {
+          "method": "pay_bill",
+          "example": "bill = await client.pay_bill(\n    reference_number=\"BILL-2026-0042\",\n    amount=6000,\n    merchant_account=\"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n    merchant_reference_number=\"8110411076\",\n    merchant_service=[\"STARTERE36\"],\n)\nif bill.responseCode == 0:\n    print(\"paid\")"
+        },
+        "typescript": {
+          "method": "payBill",
+          "example": "const bill = await client.payBill({\n  referenceNumber: \"BILL-2026-0042\",\n  amount: 6000,\n  merchantAccount: \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n  merchantReferenceNumber: \"8110411076\",\n  merchantService: [\"STARTERE36\"],\n});\nif (bill.responseCode === 0) {\n  console.log(\"paid\");\n}"
+        },
+        "rust": {
+          "method": "pay_bill",
+          "example": "let bill = client\n    .pay_bill(PayBill::new(\n        \"BILL-2026-0042\",\n        6000.0,\n        \"A3878DC1-F07D-48E7-AA59-8276C3C26647\",\n        \"8110411076\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-business-balance",
+      "section": "business-account",
+      "name": "Check the business account balance",
+      "operation": "Your business account - Check your balance",
+      "endpoint": "POST /accountBalance",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the business account balance.",
+      "notes": [
+        "Check `availableBalance`, not `totalBalance`, before a payout run — it is what you can actually send."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_business_balance",
+          "example": "balance = await client.get_business_balance(reference_number=\"BAL-2026-0042\")\nprint(balance.availableBalance)"
+        },
+        "typescript": {
+          "method": "getBusinessBalance",
+          "example": "const balance = await client.getBusinessBalance({\n  referenceNumber: \"BAL-2026-0042\",\n});\nconsole.log(balance.availableBalance);"
+        },
+        "rust": {
+          "method": "get_business_balance",
+          "example": "let balance = client.get_business_balance(\"BAL-2026-0042\").await?;\nprintln!(\"{:?}\", balance.available_balance);"
+        }
+      }
+    },
+    {
+      "id": "get-business-transactions",
+      "section": "business-account",
+      "name": "Get the transaction history",
+      "operation": "Your business account - Get your transaction history",
+      "endpoint": "POST /transactionHistory",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns every transaction on the business account between two dates: money in, money out and fees, up to 10,000 at a time.",
+      "notes": [
+        "Use it to reconcile your records with Paga's."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_business_transactions",
+          "example": "history = await client.get_business_transactions(\n    reference_number=\"HIS-2026-0042\",\n    start_date_utc=\"2026-11-01T00:00:00\",\n    end_date_utc=\"2026-11-04T00:00:00\",\n)"
+        },
+        "typescript": {
+          "method": "getBusinessTransactions",
+          "example": "const history = await client.getBusinessTransactions({\n  referenceNumber: \"HIS-2026-0042\",\n  startDateUTC: \"2026-11-01T00:00:00\",\n  endDateUTC: \"2026-11-04T00:00:00\",\n});"
+        },
+        "rust": {
+          "method": "get_business_transactions",
+          "example": "let history = client\n    .get_business_transactions(GetBusinessTransactions::new(\n        \"HIS-2026-0042\",\n        \"2026-11-01T00:00:00\",\n        \"2026-11-04T00:00:00\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-recent-transactions",
+      "section": "business-account",
+      "name": "Get the recent transactions",
+      "operation": "Your business account - Get your recent transactions",
+      "endpoint": "POST /recentTransactionHistory",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the last five transactions on the business account, newest first, without a date range.",
+      "notes": [
+        "For anything further back, use the transaction history endpoint."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_recent_transactions",
+          "example": "recent = await client.get_recent_transactions(reference_number=\"REF-000001\")"
+        },
+        "typescript": {
+          "method": "getRecentTransactions",
+          "example": "const recent = await client.getRecentTransactions({\n  referenceNumber: \"REF-000001\",\n});"
+        },
+        "rust": {
+          "method": "get_recent_transactions",
+          "example": "let recent = client\n    .get_recent_transactions(GetRecentTransactions::new(\"REF-000001\"))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-operation-status",
+      "section": "business-account",
+      "name": "Check an operation's status",
+      "operation": "Business API - Get an operation status",
+      "endpoint": "POST /getOperationStatus",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber"
+      ],
+      "description": "Returns the status of a business operation.",
+      "notes": [
+        "The status is in `transactionStatus`, not `status`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_operation_status",
+          "example": "status = await client.get_operation_status(reference_number=\"PAY-2026-0311\")\nprint(status.transactionStatus)"
+        },
+        "typescript": {
+          "method": "getOperationStatus",
+          "example": "const status = await client.getOperationStatus({\n  referenceNumber: \"PAY-2026-0311\",\n});\nconsole.log(status.transactionStatus);"
+        },
+        "rust": {
+          "method": "get_operation_status",
+          "example": "let status = client\n    .get_operation_status(GetTransactionStatus::new(\"PAY-2026-0311\"))\n    .await?;\nprintln!(\"{:?}\", status.transaction_status);"
+        }
+      }
+    },
+    {
+      "id": "onboard-merchant",
+      "section": "business-account",
+      "name": "Onboard a merchant",
+      "operation": "Business API - Onboard a merchant",
+      "endpoint": "POST /onboardMerchant",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "merchantExternalId",
+        "name",
+        "phone",
+        "email"
+      ],
+      "description": "Onboards a merchant and returns the credentials Paga issues for it.",
+      "notes": [
+        "For aggregators only.",
+        "Paga names the request field `reference`, not `referenceNumber`."
+      ],
+      "languages": {
+        "python": {
+          "method": "onboard_merchant",
+          "example": "merchant = await client.onboard_merchant(\n    reference=\"REF-000001\",\n    merchant_external_id=\"MERCH-1\",\n    legal_entity={\"name\": \"Acme Ltd\"},\n    legal_entity_representative={\n        \"firstName\": \"Bello\",\n        \"lastName\": \"Ramon\",\n        \"phone\": \"08064343187\",\n        \"email\": \"director@example.com\",\n        \"dateOfBirth\": \"1989-10-02\",\n    },\n    integration={\n        \"type\": \"EMAIL_NOTIFICATION\",\n        \"financeAdminEmail\": \"finance@example.com\",\n    },\n)"
+        },
+        "typescript": {
+          "method": "onboardMerchant",
+          "example": "const merchant = await client.onboardMerchant({\n  reference: \"REF-000001\",\n  merchantExternalId: \"MERCH-1\",\n  legalEntity: { name: \"Acme Ltd\" },\n  legalEntityRepresentative: {\n    firstName: \"Bello\",\n    lastName: \"Ramon\",\n    phone: \"080643643187\",\n    email: \"director@example.com\",\n    dateOfBirth: \"1989-10-02\",\n  },\n  integration: {\n    type: \"EMAIL_NOTIFICATION\",\n    financeAdminEmail: \"finance@example.com\",\n  },\n});"
+        },
+        "rust": {
+          "method": "onboard_merchant",
+          "example": "let merchant = client\n    .onboard_merchant(OnboardMerchant::new(\n        \"REF-000001\",\n        \"MERCH-1\",\n        serde_json::json!({ \"name\": \"Acme Ltd\" }),\n        serde_json::json!({\n            \"firstName\": \"Bello\",\n            \"lastName\": \"Ramon\",\n            \"phone\": \"08064343187\",\n            \"email\": \"director@example.com\",\n            \"dateOfBirth\": \"1989-10-02\",\n        }),\n        serde_json::json!({\n            \"type\": \"EMAIL_NOTIFICATION\",\n            \"financeAdminEmail\": \"finance@example.com\",\n        }),\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "dispense-cash",
+      "section": "business-account",
+      "name": "Dispense cash",
+      "operation": "Business API - Dispense cash",
+      "endpoint": "POST /dispenseCash",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "customerPhoneNumber",
+        "amount",
+        "withdrawalCode"
+      ],
+      "description": "Dispenses cash against a customer's withdrawal code.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "dispense_cash",
+          "example": "cash = await client.dispense_cash(\n    reference_number=\"CASH-2026-0042\",\n    customer_phone_number=\"08064343187\",\n    amount=5000,\n    withdrawal_code=\"123456\",\n)"
+        },
+        "typescript": {
+          "method": "dispenseCash",
+          "example": "const cash = await client.dispenseCash({\n  referenceNumber: \"CASH-2026-0042\",\n  customerPhoneNumber: \"08064343187\",\n  amount: 5000,\n  withdrawalCode: \"123456\",\n});"
+        },
+        "rust": {
+          "method": "dispense_cash",
+          "example": "let cash = client\n    .dispense_cash(DispenseCash::new(\n        \"CASH-2026-0042\",\n        \"08064343187\",\n        5000.0,\n        \"123456\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "create-subsidiary-account",
+      "section": "subsidiary",
+      "name": "Create a subsidiary account",
+      "operation": "Subsidiary Accounts - Create an account",
+      "endpoint": "POST /subsidiary-accounts",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountReference",
+        "iifiNumber",
+        "autoSweep.bankPublicId",
+        "autoSweep.destination",
+        "autoSweep.accountNumber",
+        "callbackUrl"
+      ],
+      "description": "Creates a Paga account for one of your customers.",
+      "notes": [
+        "Leave out `autoSweep` for a ledger-backed account that holds funds; set `autoSweep.destination` to `VIRTUAL_ACCOUNT` or `BANK` for a virtual account that settles straight away.",
+        "Reusing a `referenceNumber` or `accountReference` returns status code `102` and never creates a second account."
+      ],
+      "languages": {
+        "python": {
+          "method": "create_subsidiary_account",
+          "example": "account = await client.create_subsidiary_account(\n    reference_number=\"REF-000005\",\n    account_reference=\"CUST-000184-WALLET\",\n    account_name=\"Bello Ramon\",\n    iifi_number=\"22222132329\",\n    callback_url=\"https://yourstore.com/webhooks/paga\",\n)\nif account.statusCode == \"102\":\n    print(\"duplicate reference\")"
+        },
+        "typescript": {
+          "method": "createSubsidiaryAccount",
+          "example": "const account = await client.createSubsidiaryAccount({\n  referenceNumber: \"REF-000005\",\n  accountReference: \"CUST-000184-WALLET\",\n  accountName: \"Bello Ramon\",\n  iifiNumber: \"22222132329\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga\",\n});\nif (account.statusCode === \"102\") {\n  console.log(\"duplicate reference\");\n}"
+        },
+        "rust": {
+          "method": "create_subsidiary_account",
+          "example": "let account = client\n    .create_subsidiary_account(CreateSubsidiaryAccount::new(\n        \"REF-000005\",\n        \"CUST-000184-WALLET\",\n        \"Bello Ramon\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "charge-subsidiary-account",
+      "section": "subsidiary",
+      "name": "Charge a subsidiary account",
+      "operation": "Subsidiary Accounts - Charge an account",
+      "endpoint": "POST /subsidiary-accounts/{accountReference}/charge",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "currency",
+        "narration"
+      ],
+      "description": "Debits a ledger-backed subsidiary account.",
+      "notes": [
+        "Not available on virtual accounts.",
+        "Retrying with the same `referenceNumber` never moves money twice."
+      ],
+      "languages": {
+        "python": {
+          "method": "charge_subsidiary_account",
+          "example": "charge = await client.charge_subsidiary_account(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-CHARGE-001\",\n    amount=1000,\n    narration=\"Service fee\",\n)\nprint(charge.newBalance)"
+        },
+        "typescript": {
+          "method": "chargeSubsidiaryAccount",
+          "example": "const charge = await client.chargeSubsidiaryAccount({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-CHARGE-001\",\n  amount: 1000,\n  narration: \"Service fee\",\n});\nconsole.log(charge.newBalance);"
+        },
+        "rust": {
+          "method": "charge_subsidiary_account",
+          "example": "let charge = client\n    .charge_subsidiary_account(ChargeSubsidiaryAccount::new(\n        \"CUST-000184-WALLET\",\n        \"REF-CHARGE-001\",\n        1000.0,\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "top-up-subsidiary-account",
+      "section": "subsidiary",
+      "name": "Top up a subsidiary account",
+      "operation": "Subsidiary Accounts - Top up an account",
+      "endpoint": "POST /subsidiary-accounts/{accountReference}/topup",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "amount",
+        "currency",
+        "narration"
+      ],
+      "description": "Credits a ledger-backed subsidiary account from your business balance.",
+      "notes": [
+        "Not available on virtual accounts."
+      ],
+      "languages": {
+        "python": {
+          "method": "top_up_subsidiary_account",
+          "example": "top_up = await client.top_up_subsidiary_account(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-TOPUP-001\",\n    amount=500,\n    narration=\"Bonus credit\",\n)\nprint(top_up.newBalance)"
+        },
+        "typescript": {
+          "method": "topUpSubsidiaryAccount",
+          "example": "const topUp = await client.topUpSubsidiaryAccount({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-TOPUP-001\",\n  amount: 500,\n  narration: \"Bonus credit\",\n});\nconsole.log(topUp.newBalance);"
+        },
+        "rust": {
+          "method": "top_up_subsidiary_account",
+          "example": "let top_up = client\n    .top_up_subsidiary_account(TopUpSubsidiaryAccount::new(\n        \"CUST-000184-WALLET\",\n        \"REF-TOPUP-001\",\n        500.0,\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "transfer-between-subsidiary-accounts",
+      "section": "subsidiary",
+      "name": "Transfer between subsidiary accounts",
+      "operation": "Subsidiary Accounts - Transfer between accounts",
+      "endpoint": "POST /subsidiary-accounts/transfer",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "sourceAccountIdentifier",
+        "destinationAccountIdentifier",
+        "amount",
+        "currency",
+        "narration"
+      ],
+      "description": "Moves money between two ledger-backed subsidiary accounts.",
+      "notes": [
+        "Paga sends one callback, for the source account only."
+      ],
+      "languages": {
+        "python": {
+          "method": "transfer_between_subsidiary_accounts",
+          "example": "transfer = await client.transfer_between_subsidiary_accounts(\n    source_account_reference=\"CUST-000184-WALLET\",\n    destination_account_reference=\"CUST-000221-WALLET\",\n    reference_number=\"REF-TRANSFER-001\",\n    amount=1500,\n    narration=\"Payment for goods\",\n)"
+        },
+        "typescript": {
+          "method": "transferBetweenSubsidiaryAccounts",
+          "example": "const transfer = await client.transferBetweenSubsidiaryAccounts({\n  sourceAccountReference: \"CUST-000184-WALLET\",\n  destinationAccountReference: \"CUST-000221-WALLET\",\n  referenceNumber: \"REF-TRANSFER-001\",\n  amount: 1500,\n  narration: \"Payment for goods\",\n});"
+        },
+        "rust": {
+          "method": "transfer_between_subsidiary_accounts",
+          "example": "let transfer = client\n    .transfer_between_subsidiary_accounts(\n        TransferBetweenSubsidiaryAccounts::new(\n            \"CUST-000184-WALLET\",\n            \"CUST-000221-WALLET\",\n            \"REF-TRANSFER-001\",\n            1500.0,\n        ),\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "retrieve-subsidiary-account",
+      "section": "subsidiary",
+      "name": "Retrieve a subsidiary account",
+      "operation": "Subsidiary Accounts - Retrieve an account",
+      "endpoint": "GET /subsidiary-accounts/{accountReference}",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier"
+      ],
+      "description": "Returns an account's details, limits, callback URL and balance.",
+      "notes": [
+        "The `accountIdentifier` is the account's `accountReference`."
+      ],
+      "languages": {
+        "python": {
+          "method": "retrieve_subsidiary_account",
+          "example": "account = await client.retrieve_subsidiary_account(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-GET-001\",\n)"
+        },
+        "typescript": {
+          "method": "retrieveSubsidiaryAccount",
+          "example": "const account = await client.retrieveSubsidiaryAccount({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-GET-001\",\n});"
+        },
+        "rust": {
+          "method": "retrieve_subsidiary_account",
+          "example": "let account = client\n    .retrieve_subsidiary_account(\"CUST-000184-WALLET\", \"REF-GET-001\")\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "update-subsidiary-account",
+      "section": "subsidiary",
+      "name": "Update a subsidiary account",
+      "operation": "Subsidiary Accounts - Update an account",
+      "endpoint": "PUT /subsidiary-accounts/{accountReference}",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier",
+        "iifiNumber",
+        "autoSweep.destination",
+        "autoSweep.bankPublicId",
+        "autoSweep.accountNumber",
+        "callbackUrl"
+      ],
+      "description": "Changes an account.",
+      "notes": [
+        "Send only what you want to change.",
+        "`accountNumber` and `accountReference` cannot be changed."
+      ],
+      "languages": {
+        "python": {
+          "method": "update_subsidiary_account",
+          "example": "account = await client.update_subsidiary_account(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-UPDATE-001\",\n    status=\"DISABLED\",\n)"
+        },
+        "typescript": {
+          "method": "updateSubsidiaryAccount",
+          "example": "const account = await client.updateSubsidiaryAccount({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-UPDATE-001\",\n  status: \"DISABLED\",\n});"
+        },
+        "rust": {
+          "method": "update_subsidiary_account",
+          "example": "let account = client\n    .update_subsidiary_account(UpdateSubsidiaryAccount::new(\n        \"CUST-000184-WALLET\",\n        \"REF-UPDATE-001\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-subsidiary-balance",
+      "section": "subsidiary",
+      "name": "Get a subsidiary account balance",
+      "operation": "Subsidiary Accounts - Get the balance",
+      "endpoint": "GET /subsidiary-accounts/{accountReference}/balance",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier"
+      ],
+      "description": "Returns an account's balance.",
+      "notes": [],
+      "languages": {
+        "python": {
+          "method": "get_subsidiary_balance",
+          "example": "balance = await client.get_subsidiary_balance(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-BAL-001\",\n)\nprint(balance.balance)"
+        },
+        "typescript": {
+          "method": "getSubsidiaryBalance",
+          "example": "const balance = await client.getSubsidiaryBalance({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-BAL-001\",\n});\nconsole.log(balance.balance);"
+        },
+        "rust": {
+          "method": "get_subsidiary_balance",
+          "example": "let balance = client\n    .get_subsidiary_balance(\"CUST-000184-WALLET\", \"REF-BAL-001\")\n    .await?;\nprintln!(\"{:?}\", balance.balance);"
+        }
+      }
+    },
+    {
+      "id": "get-subsidiary-history",
+      "section": "subsidiary",
+      "name": "Get a subsidiary account history",
+      "operation": "Subsidiary Accounts - Get transaction history",
+      "endpoint": "GET /subsidiary-accounts/{accountReference}/history",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "accountIdentifier",
+        "startDateTimeUTC",
+        "endDateTimeUTC"
+      ],
+      "description": "Returns an account's transactions.",
+      "notes": [
+        "Up to three months at a time.",
+        "Pages start at `0`.",
+        "`referenceNumber` is required as a query parameter, but is not part of the hash."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_subsidiary_history",
+          "example": "history = await client.get_subsidiary_history(\n    account_reference=\"CUST-000184-WALLET\",\n    reference_number=\"REF-HIS-001\",\n    start_date_time_utc=\"2026-06-01T00:00:00\",\n    end_date_time_utc=\"2026-06-30T23:59:59\",\n    page_number=0,\n    page_size=20,\n)"
+        },
+        "typescript": {
+          "method": "getSubsidiaryHistory",
+          "example": "const history = await client.getSubsidiaryHistory({\n  accountReference: \"CUST-000184-WALLET\",\n  referenceNumber: \"REF-HIS-001\",\n  startDateTimeUTC: \"2026-06-01T00:00:00\",\n  endDateTimeUTC: \"2026-06-30T23:59:59\",\n  pageNumber: 0,\n  pageSize: 20,\n});"
+        },
+        "rust": {
+          "method": "get_subsidiary_history",
+          "example": "let history = client\n    .get_subsidiary_history(GetSubsidiaryHistory::new(\n        \"CUST-000184-WALLET\",\n        \"REF-HIS-001\",\n        \"2026-06-01T00:00:00\",\n        \"2026-06-30T23:59:59\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "register-persistent-payment-account",
+      "section": "persistent",
+      "name": "Register a persistent payment account",
+      "operation": "Collect API - Register a persistent payment account",
+      "endpoint": "POST /registerPersistentPaymentAccount",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountReference",
+        "financialIdentificationNumber",
+        "creditBankId",
+        "creditBankAccountNumber",
+        "callbackUrl"
+      ],
+      "description": "Registers a standing instruction that lets a customer pay you repeatedly from the same account.",
+      "notes": [
+        "`accountReference` must be 11 to 30 characters.",
+        "Paga calls your `callbackUrl` whenever the account is funded."
+      ],
+      "languages": {
+        "python": {
+          "method": "register_persistent_payment_account",
+          "example": "account = await client.register_persistent_payment_account(\n    reference_number=\"REF-000006\",\n    account_reference=\"CUST-000184-WALLET\",\n    financial_identification_number=\"22222132329\",\n    credit_bank_id=\"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n    credit_bank_account_number=\"0000000000\",\n    callback_url=\"https://yourstore.com/webhooks/paga\",\n)"
+        },
+        "typescript": {
+          "method": "registerPersistentPaymentAccount",
+          "example": "const account = await client.registerPersistentPaymentAccount({\n  referenceNumber: \"REF-000006\",\n  accountReference: \"CUST-000184-WALLET\",\n  financialIdentificationNumber: \"22222132329\",\n  creditBankId: \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n  creditBankAccountNumber: \"0000000000\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga\",\n});"
+        },
+        "rust": {
+          "method": "register_persistent_payment_account",
+          "example": "let account = client\n    .register_persistent_payment_account(\n        RegisterPersistentPaymentAccount::new(\n            \"REF-000006\",\n            \"CUST-000184-WALLET\",\n            \"22222132329\",\n            \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n            \"0000000000\",\n            \"https://yourstore.com/webhooks/paga\",\n        ),\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "update-persistent-payment-account",
+      "section": "persistent",
+      "name": "Update a persistent payment account",
+      "operation": "Collect API - Update a persistent payment account",
+      "endpoint": "POST /updatePersistentPaymentAccount",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier",
+        "financialIdentificationNumber",
+        "creditBankId",
+        "creditBankAccountNumber",
+        "callbackUrl"
+      ],
+      "description": "Changes a persistent payment account.",
+      "notes": [
+        "Every field takes part in the hash, so send the current value of the ones you are not changing."
+      ],
+      "languages": {
+        "python": {
+          "method": "update_persistent_payment_account",
+          "example": "account = await client.update_persistent_payment_account(\n    reference_number=\"REF-000007\",\n    account_identifier=\"CUST-000184-WALLET\",\n    callback_url=\"https://yourstore.com/webhooks/paga-v2\",\n)"
+        },
+        "typescript": {
+          "method": "updatePersistentPaymentAccount",
+          "example": "const account = await client.updatePersistentPaymentAccount({\n  referenceNumber: \"REF-000007\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga-v2\",\n});"
+        },
+        "rust": {
+          "method": "update_persistent_payment_account",
+          "example": "let account = client\n    .update_persistent_payment_account(\n        UpdatePersistentPaymentAccount::new(\n            \"REF-000007\",\n            \"CUST-000184-WALLET\",\n        ),\n    )\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "get-persistent-payment-account",
+      "section": "persistent",
+      "name": "Get a persistent payment account",
+      "operation": "Collect API - Get a persistent payment account",
+      "endpoint": "POST /getPersistentPaymentAccount",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier"
+      ],
+      "description": "Returns a persistent payment account.",
+      "notes": [
+        "The `accountIdentifier` accepts a NUBAN **or** an `accountReference`."
+      ],
+      "languages": {
+        "python": {
+          "method": "get_persistent_payment_account",
+          "example": "account = await client.get_persistent_payment_account(\n    reference_number=\"REF-000008\",\n    account_identifier=\"CUST-000184-WALLET\",\n)"
+        },
+        "typescript": {
+          "method": "getPersistentPaymentAccount",
+          "example": "const account = await client.getPersistentPaymentAccount({\n  referenceNumber: \"REF-000008\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n});"
+        },
+        "rust": {
+          "method": "get_persistent_payment_account",
+          "example": "let account = client\n    .get_persistent_payment_account(\"REF-000008\", \"CUST-000184-WALLET\")\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "delete-persistent-payment-account",
+      "section": "persistent",
+      "name": "Delete a persistent payment account",
+      "operation": "Collect API - Delete a persistent payment account",
+      "endpoint": "POST /deletePersistentPaymentAccount",
+      "api": "collect",
+      "auth": "basic",
+      "hashFields": [
+        "referenceNumber",
+        "accountIdentifier"
+      ],
+      "description": "Deletes a persistent payment account.",
+      "notes": [
+        "The `accountIdentifier` accepts a NUBAN **or** an `accountReference`."
+      ],
+      "languages": {
+        "python": {
+          "method": "delete_persistent_payment_account",
+          "example": "await client.delete_persistent_payment_account(\n    reference_number=\"REF-000009\",\n    account_identifier=\"CUST-000184-WALLET\",\n)"
+        },
+        "typescript": {
+          "method": "deletePersistentPaymentAccount",
+          "example": "await client.deletePersistentPaymentAccount({\n  referenceNumber: \"REF-000009\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n});"
+        },
+        "rust": {
+          "method": "delete_persistent_payment_account",
+          "example": "client\n    .delete_persistent_payment_account(\"REF-000009\", \"CUST-000184-WALLET\")\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "register-customer",
+      "section": "customers",
+      "name": "Register a customer",
+      "operation": "Business API - Register a customer",
+      "endpoint": "POST /registerCustomer",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "customerPhoneNumber",
+        "customerFirstName",
+        "customerLastName"
+      ],
+      "description": "Opens a Paga account for a customer on your business account.",
+      "notes": [
+        "The phone number must not already belong to a registered customer."
+      ],
+      "languages": {
+        "python": {
+          "method": "register_customer",
+          "example": "customer = await client.register_customer(\n    reference_number=\"REF-000010\",\n    customer_phone_number=\"08064343187\",\n    customer_first_name=\"Bello\",\n    customer_last_name=\"Ramon\",\n    customer_email=\"customer@example.com\",\n    customer_date_of_birth=\"1989-10-02\",\n)"
+        },
+        "typescript": {
+          "method": "registerCustomer",
+          "example": "const customer = await client.registerCustomer({\n  referenceNumber: \"REF-000010\",\n  customerPhoneNumber: \"08064343187\",\n  customerFirstName: \"Bello\",\n  customerLastName: \"Ramon\",\n  customerEmail: \"customer@example.com\",\n  customerDateOfBirth: \"1989-10-02\",\n});"
+        },
+        "rust": {
+          "method": "register_customer",
+          "example": "let customer = client\n    .register_customer(RegisterCustomer::new(\n        \"REF-000010\",\n        \"08064343187\",\n        \"Bello\",\n        \"Ramon\",\n        \"customer@example.com\",\n        \"1989-10-02\",\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "register-customer-with-kyc",
+      "section": "customers",
+      "name": "Register a customer with KYC",
+      "operation": "Business API - Register a customer with KYC",
+      "endpoint": "POST /registerCustomerWithKYC",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "customerPhoneNumber",
+        "customerFirstName",
+        "customerLastName"
+      ],
+      "description": "Opens a Paga account for a customer and uploads their identification photographs.",
+      "notes": [
+        "Sent as `multipart/form-data`: a `customer` JSON part, plus `customerAccountPhoto` and `customerIdPhoto` image parts.",
+        "Each photograph must be a JPEG of at most 500 KB."
+      ],
+      "languages": {
+        "python": {
+          "method": "register_customer_with_kyc",
+          "example": "with open(\"account-photo.jpg\", \"rb\") as photo:\n    customer = await client.register_customer_with_kyc(\n        reference_number=\"REF-000011\",\n        customer_phone_number=\"08064343187\",\n        customer_email=\"customer@example.com\",\n        customer_first_name=\"Bello\",\n        customer_last_name=\"Ramon\",\n        customer_date_of_birth=\"1989-10-02\",\n        customer_gender=\"MALE\",\n        customer_account_photo=photo.read(),\n        customer_id_photo=photo.read(),\n    )"
+        },
+        "typescript": {
+          "method": "registerCustomerWithKyc",
+          "example": "import { readFile } from \"node:fs/promises\";\n\nconst customer = await client.registerCustomerWithKyc({\n  referenceNumber: \"REF-000011\",\n  customerPhoneNumber: \"08064343187\",\n  customerEmail: \"customer@example.com\",\n  customerFirstName: \"Bello\",\n  customerLastName: \"Ramon\",\n  customerDateOfBirth: \"1989-10-02\",\n  customerGender: \"MALE\",\n  customerAccountPhoto: await readFile(\"account-photo.jpg\"),\n  customerIdPhoto: await readFile(\"id-photo.jpg\"),\n});"
+        },
+        "rust": {
+          "method": "register_customer_with_kyc",
+          "example": "let photo = std::fs::read(\"account-photo.jpg\")?;\n\nlet customer = client\n    .register_customer_with_kyc(RegisterCustomerWithKyc::new(\n        \"REF-000011\",\n        \"08064343187\",\n        \"customer@example.com\",\n        \"Bello\",\n        \"Ramon\",\n        \"1989-10-02\",\n        \"MALE\",\n        photo.clone(),\n        photo,\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "register-customer-account-photo",
+      "section": "customers",
+      "name": "Upload a customer account photo",
+      "operation": "Business API - Register a customer account photo",
+      "endpoint": "POST /registerCustomerAccountPhoto",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "customerPhoneNumber"
+      ],
+      "description": "Uploads a customer's account photograph.",
+      "notes": [
+        "Sent as `multipart/form-data`: a `customer` JSON part plus a `customerAccountPhoto` image part.",
+        "The photograph must be a JPEG of at most 500 KB."
+      ],
+      "languages": {
+        "python": {
+          "method": "register_customer_account_photo",
+          "example": "with open(\"account-photo.jpg\", \"rb\") as photo:\n    await client.register_customer_account_photo(\n        reference_number=\"REF-000012\",\n        customer_phone_number=\"08064343187\",\n        customer_account_photo=photo.read(),\n    )"
+        },
+        "typescript": {
+          "method": "registerCustomerAccountPhoto",
+          "example": "import { readFile } from \"node:fs/promises\";\n\nawait client.registerCustomerAccountPhoto({\n  referenceNumber: \"REF-000012\",\n  customerPhoneNumber: \"08064343187\",\n  customerAccountPhoto: await readFile(\"account-photo.jpg\"),\n});"
+        },
+        "rust": {
+          "method": "register_customer_account_photo",
+          "example": "let photo = std::fs::read(\"account-photo.jpg\")?;\n\nclient\n    .register_customer_account_photo(RegisterCustomerAccountPhoto::new(\n        \"REF-000012\",\n        \"08064343187\",\n        photo,\n    ))\n    .await?;"
+        }
+      }
+    },
+    {
+      "id": "register-customer-identification",
+      "section": "customers",
+      "name": "Upload a customer identification",
+      "operation": "Business API - Register a customer identification",
+      "endpoint": "POST /registerCustomerIdentification",
+      "api": "business",
+      "auth": "headers",
+      "hashFields": [
+        "referenceNumber",
+        "customerPhoneNumber",
+        "customerIdType",
+        "customerIdNumber",
+        "customerIdExpirationDate"
+      ],
+      "description": "Uploads a customer's identification and its photograph.",
+      "notes": [
+        "Sent as `multipart/form-data`: a `customer` JSON part plus a `customerIdPhoto` image part.",
+        "`customerIdExpirationDate` is formatted as `YYYY-MM-DD`."
+      ],
+      "languages": {
+        "python": {
+          "method": "register_customer_identification",
+          "example": "with open(\"id-photo.jpg\", \"rb\") as photo:\n    await client.register_customer_identification(\n        reference_number=\"REF-000013\",\n        customer_phone_number=\"08064343187\",\n        customer_id_type=\"NATIONAL_ID\",\n        customer_id_number=\"12345678901\",\n        customer_id_expiration_date=\"2030-01-01\",\n        customer_id_photo=photo.read(),\n    )"
+        },
+        "typescript": {
+          "method": "registerCustomerIdentification",
+          "example": "import { readFile } from \"node:fs/promises\";\n\nawait client.registerCustomerIdentification({\n  referenceNumber: \"REF-000013\",\n  customerPhoneNumber: \"08064343187\",\n  customerIdType: \"NATIONAL_ID\",\n  customerIdNumber: \"12345678901\",\n  customerIdExpirationDate: \"2030-01-01\",\n  customerIdPhoto: await readFile(\"id-photo.jpg\"),\n});"
+        },
+        "rust": {
+          "method": "register_customer_identification",
+          "example": "let photo = std::fs::read(\"id-photo.jpg\")?;\n\nclient\n    .register_customer_identification(RegisterCustomerIdentification::new(\n        \"REF-000013\",\n        \"08064343187\",\n        \"NATIONAL_ID\",\n        \"12345678901\",\n        \"2030-01-01\",\n        photo,\n    ))\n    .await?;"
+        }
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "id": "checkout-notification",
+      "name": "Checkout payment notification",
+      "operation": "Checkout - Handle the payment notification",
+      "signedFields": [
+        "amount",
+        "timeStamp",
+        "paymentReference"
+      ],
+      "delivery": "Paga sends this to your callback URL.",
+      "description": "Sent to your callback URL when a Checkout payment completes. Check the hash, then fulfil.",
+      "notes": [
+        "De-duplicate on the payment reference."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_checkout_notification",
+          "example": "ok = verify_checkout_notification(payload, received_hash, hash_key)"
+        },
+        "typescript": {
+          "method": "verifyCheckoutNotification",
+          "example": "const ok = await verifyCheckoutNotification(payload, receivedHash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_checkout_notification",
+          "example": "let ok = webhooks::verify_checkout_notification(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "payment-callback",
+      "name": "Dynamic virtual account callback",
+      "operation": "Dynamic virtual account - Handle the callback",
+      "signedFields": [
+        "notificationId",
+        "statusCode",
+        "externalReferenceNumber",
+        "state",
+        "outstandingBalance"
+      ],
+      "delivery": "Paga sends this to your callback URL.",
+      "description": "Sent to your `callBackUrl` when a payment request is paid, expires or is cancelled.",
+      "notes": [
+        "`outstandingBalance` is signed with two decimals.",
+        "De-duplicate on `notificationId`."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_payment_callback",
+          "example": "ok = verify_payment_callback(payload, received_hash, hash_key)"
+        },
+        "typescript": {
+          "method": "verifyPaymentCallback",
+          "example": "const ok = await verifyPaymentCallback(payload, receivedHash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_payment_callback",
+          "example": "let ok = webhooks::verify_payment_callback(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "funding-notification",
+      "name": "Subsidiary account funding notification",
+      "operation": "Subsidiary Accounts - Handle a funding notification",
+      "signedFields": [
+        "transactionReference",
+        "transactionDate",
+        "amount",
+        "accountNumber",
+        "timestamp"
+      ],
+      "delivery": "Paga sends this to your callback URL.",
+      "description": "Sent when someone pays into a subsidiary account.",
+      "notes": [
+        "The hash travels in the `x-paga-hash-v3` header, not the body."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_funding_notification",
+          "example": "ok = verify_funding_notification(payload, received_hash, hash_key)"
+        },
+        "typescript": {
+          "method": "verifyFundingNotification",
+          "example": "const ok = await verifyFundingNotification(payload, receivedHash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_funding_notification",
+          "example": "let ok = webhooks::verify_funding_notification(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "subsidiary-operation",
+      "name": "Subsidiary charge, top-up or transfer callback",
+      "operation": "Subsidiary Accounts - Handle a charge, top-up or transfer callback",
+      "signedFields": [
+        "externalReferenceNumber",
+        "transactionDate",
+        "amount",
+        "accountNumber"
+      ],
+      "delivery": "Paga sends this to your callback URL.",
+      "description": "Sent when a charge, a top-up or a transfer completes.",
+      "notes": [
+        "The `amount` is a formatted string with commas, such as `\"1,000.00\"`.",
+        "A transfer sends one callback, for the source account only."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_subsidiary_operation",
+          "example": "ok = verify_subsidiary_operation(payload, received_hash, hash_key)"
+        },
+        "typescript": {
+          "method": "verifySubsidiaryOperation",
+          "example": "const ok = await verifySubsidiaryOperation(payload, receivedHash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_subsidiary_operation",
+          "example": "let ok = webhooks::verify_subsidiary_operation(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "money-transfer-notification",
+      "name": "Money transfer notification",
+      "operation": "Money transfer - Handle the notification",
+      "signedFields": [
+        "referenceNumber",
+        "transactionDate",
+        "transactionId",
+        "amount",
+        "sessionId"
+      ],
+      "delivery": "Paga sends this to your `statusCallbackUrl`.",
+      "description": "Sent once a money transfer is processed.",
+      "notes": [
+        "The digest travels in the `x-paga-hash` **header**, not the body.",
+        "Answer HTTP 200 with `{\"status\": \"SUCCESS\"}` once you have accepted it; Paga retries until it gets that.",
+        "De-duplicate on `referenceNumber`."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_money_transfer_notification",
+          "example": "ok = verify_money_transfer_notification(payload, request.headers[\"x-paga-hash\"], hash_key)"
+        },
+        "typescript": {
+          "method": "verifyMoneyTransferNotification",
+          "example": "const ok = await verifyMoneyTransferNotification(payload, request.headers[\"x-paga-hash\"], hashKey);"
+        },
+        "rust": {
+          "method": "verify_money_transfer_notification",
+          "example": "let ok = webhooks::verify_money_transfer_notification(Some(&payload), &received_hash, hash_key, None);"
+        }
+      }
+    },
+    {
+      "id": "persistent-payment-account",
+      "name": "Persistent payment account callback",
+      "operation": "Collect API - Persistent Payment Account callback",
+      "signedFields": [
+        "statusCode",
+        "accountNumber",
+        "amount",
+        "clearingFeeAmount",
+        "transferFeeAmount"
+      ],
+      "delivery": "Paga sends this to your callback URL.",
+      "description": "Sent when a persistent payment account is funded.",
+      "notes": [
+        "The body's `hash` field signs the five fields above.",
+        "The `x-paga-hash` header signs `transactionReference + accountNumber + amount` instead."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_persistent_payment_account_callback",
+          "example": "ok = verify_persistent_payment_account_callback(payload, received_hash, hash_key)"
+        },
+        "typescript": {
+          "method": "verifyPersistentPaymentAccountCallback",
+          "example": "const ok = await verifyPersistentPaymentAccountCallback(payload, receivedHash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_persistent_payment_account_callback",
+          "example": "let ok = webhooks::verify_persistent_payment_account_callback(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "mandate-callback",
+      "name": "Direct Debit mandate callback",
+      "operation": "Direct Debit - Handle the mandate callback",
+      "signedFields": [
+        "statusCode",
+        "timeStamp",
+        "accountNumber",
+        "bankName",
+        "referenceNumber",
+        "mandateStatus"
+      ],
+      "delivery": "Paga sends this to your mandate callback URL.",
+      "description": "Sent when the authorisation transfer arrives and when the bank approves the mandate.",
+      "notes": [
+        "The `timeStamp` carries nanosecond precision and must be hashed exactly as received.",
+        "De-duplicate on `notificationId`."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_mandate_callback",
+          "example": "ok = verify_mandate_callback(payload, payload[\"hash\"], hash_key)"
+        },
+        "typescript": {
+          "method": "verifyMandateCallback",
+          "example": "const ok = await verifyMandateCallback(payload, payload.hash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_mandate_callback",
+          "example": "let ok = webhooks::verify_mandate_callback(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "charge-callback",
+      "name": "Direct Debit charge callback",
+      "operation": "Direct Debit - Handle the charge callback",
+      "signedFields": [
+        "statusCode",
+        "referenceNumber",
+        "accountReference",
+        "amount"
+      ],
+      "delivery": "Paga sends this to your charge callback URL.",
+      "description": "Sent when a mandate charge completes.",
+      "notes": [
+        "The `amount` is a string with two decimals and no commas, such as `\"600.00\"`.",
+        "Decide on `statusCode`, and look up any non-zero code."
+      ],
+      "languages": {
+        "python": {
+          "method": "verify_charge_callback",
+          "example": "ok = verify_charge_callback(payload, payload[\"hash\"], hash_key)"
+        },
+        "typescript": {
+          "method": "verifyChargeCallback",
+          "example": "const ok = await verifyChargeCallback(payload, payload.hash, hashKey);"
+        },
+        "rust": {
+          "method": "verify_charge_callback",
+          "example": "let ok = webhooks::verify_charge_callback(Some(&payload), &received_hash, hash_key);"
+        }
+      }
+    },
+    {
+      "id": "usd-payment-webhook",
+      "name": "USD (ACH, Wire and Swift) payment webhook",
+      "operation": "Bank transfer (ACH, Wire and Swift) - Handle the webhook",
+      "signedFields": [],
+      "delivery": "Paga sends this to your USD callback URL.",
+      "description": "Sent as `CAPTURED` when a dollar payment clears, or `FUNDING_FAILED` if Paga could not fund it.",
+      "notes": [
+        "This webhook carries **no signature** — there is no hash to verify.",
+        "De-duplicate on `referenceNumber` plus `paymentId`."
+      ],
+      "languages": {
+        "python": {
+          "method": "parse_usd_payment_webhook",
+          "example": "webhook = parse_usd_payment_webhook(payload)\nif webhook.isCaptured:\n    ..."
+        },
+        "typescript": {
+          "method": "parseUsdPaymentWebhook",
+          "example": "const webhook = parseUsdPaymentWebhook(payload);\nif (webhook.event === \"CAPTURED\") { /* fulfil */ }"
+        },
+        "rust": {
+          "method": "parse_usd_payment_webhook",
+          "example": "let webhook = webhooks::parse_usd_payment_webhook(Some(&payload));\nif webhook.is_captured() { /* fulfil */ }"
+        }
+      }
+    }
+  ]
+}

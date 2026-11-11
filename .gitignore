@@ -1,7 +1,10 @@
-# The three SDKs live in their own repositories.
+# The three SDKs and their documentation sites live in their own repositories.
 paga-python/
 paga-ts/
 paga-rs/
+paga-python-docs/
+paga-ts-docs/
+paga-rs-docs/
 
 # Scratch space
 *.tgz
