@@ -1,7 +1,14 @@
 # Paga Engine SDKs
 
-Official SDKs for the [Paga Engine API](https://developer-docs.paga.com/), one
-per language, all tracking the same operation set.
+Unofficial community SDKs for the [Paga Engine API](https://developer-docs.paga.com/),
+one per language, all tracking the same operation set.
+
+> **These are unofficial SDKs.** They are not built, endorsed, supported or
+> published by Paga. They are community-maintained and follow Paga's published
+> API reference. Paga's own documentation is the source of truth — if this
+> documentation and Paga's disagree, Paga's is right.
+>
+> Use at your own risk, and report issues here rather than to Paga.
 
 | SDK | Package | Repository |
 |---|---|---|
