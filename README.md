@@ -10,11 +10,11 @@ one per language, all tracking the same operation set.
 >
 > Use at your own risk, and report issues here rather than to Paga.
 
-| SDK | Package | Import | Repository |
-|---|---|---|---|
-| Python | [`paga-python`](https://pypi.org/project/paga-python/) | `import paga` | [TeamTrustBridge/paga-python](https://github.com/TeamTrustBridge/paga-python) |
-| TypeScript | `paga-ts` | `import ... from "paga"` | [TeamTrustBridge/paga-ts](https://github.com/TeamTrustBridge/paga-ts) |
-| Rust | [`paga-rs`](https://crates.io/crates/paga-rs) | `use paga::` | [TeamTrustBridge/paga-rs](https://github.com/TeamTrustBridge/paga-rs) |
+| SDK | Package | Import | Docs | Repository |
+|---|---|---|---|---|
+| Python | [`paga-python`](https://pypi.org/project/paga-python/) | `import paga` | [paga-python-docs](https://teamtrustbridge.github.io/paga-python-docs/) | [TeamTrustBridge/paga-python](https://github.com/TeamTrustBridge/paga-python) |
+| TypeScript | `paga-ts` | `import ... from "paga"` | [paga-ts-docs](https://teamtrustbridge.github.io/paga-ts-docs/) | [TeamTrustBridge/paga-ts](https://github.com/TeamTrustBridge/paga-ts) |
+| Rust | [`paga-rs`](https://crates.io/crates/paga-rs) | `use paga::` | [paga-rs-docs](https://teamtrustbridge.github.io/paga-rs-docs/) | [TeamTrustBridge/paga-rs](https://github.com/TeamTrustBridge/paga-rs) |
 
 Each package is named after its language, so the three can be published side
 by side on the same registry. The import path is the same short name in all
@@ -119,9 +119,28 @@ done
 
 ## Documentation
 
-The SDK documentation is hosted on GitHub, in each repository's `README.md`.
-This repository is the home for the documentation site and the shared
-material that spans all three SDKs.
+Each SDK has its own documentation website, published with GitHub Pages and
+generated from the shared dataset in this repository:
+
+- [paga-python-docs](https://teamtrustbridge.github.io/paga-python-docs/)
+- [paga-ts-docs](https://teamtrustbridge.github.io/paga-ts-docs/)
+- [paga-rs-docs](https://teamtrustbridge.github.io/paga-rs-docs/)
+
+The sites are plain HTML, CSS and JavaScript — no framework and no build
+step. Every page is readable with JavaScript disabled, and each one carries
+machine-readable sidecars: `operations.json`, `llms.txt` and `sitemap.xml`.
+
+This repository owns the pipeline that produces them:
+
+- `data/operations.json` — the 50 documented operations and the 9 callbacks,
+  each with the endpoint, the auth style, the hash field order, and an
+  example in all three languages
+- `tools/build-docs.mjs` — the generator
+- `tools/assets/` — the shared stylesheet and script
+- `tools/publish-docs.sh` — builds a site and commits it into its repo
+
+Because one dataset produces all three, the sites can never disagree with
+each other or with the SDKs.
 
 ## License
 
