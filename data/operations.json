@@ -159,12 +159,17 @@
         "amount",
         "currency",
         "payer.phoneNumber",
-        "payer.email"
+        "payer.email",
+        "payee.accountNumber",
+        "payee.phoneNumber",
+        "payee.bankId",
+        "payee.bankAccountNumber"
       ],
       "description": "Creates a payment request. The customer pays via the payment methods you send, and Paga calls your callback when the payment completes.",
       "notes": [
         "The same operation serves the Bank USSD, Paga wallet and USD bank transfer flows — pick the flow with `paymentMethods`.",
-        "`payer.email` takes part in the hash even when you omit it."
+        "`payer.email` takes part in the hash even when you omit it.",
+        "The hash signs the payee fields as well, so send the payee's account number, phone number and bank details."
       ],
       "languages": {
         "python": {
@@ -401,11 +406,16 @@
         "amount",
         "currency",
         "payer.phoneNumber",
-        "payer.email"
+        "payer.email",
+        "payee.accountNumber",
+        "payee.phoneNumber",
+        "payee.bankId",
+        "payee.bankAccountNumber"
       ],
       "description": "Creates a payment request with `paymentMethods` set to `[\"DIRECT_DEBIT\"]`, so the customer authorises you to debit their bank account.",
       "notes": [
         "The authorisation transfer must come from mobile banking, internet banking or a branch — not from POS, USSD or ATM.",
+        "The hash signs the payee fields as well, exactly like the Create a payment request operation.",
         "`payerCollectionFeeShare` and `payeeCollectionFeeShare` must sum to 1.0."
       ],
       "languages": {
@@ -1401,7 +1411,9 @@
         "accountIdentifier"
       ],
       "description": "Returns an account's balance.",
-      "notes": [],
+      "notes": [
+        "The `accountIdentifier` is the account's `accountReference`."
+      ],
       "languages": {
         "python": {
           "method": "get_subsidiary_balance",
@@ -1470,20 +1482,21 @@
       "description": "Registers a standing instruction that lets a customer pay you repeatedly from the same account.",
       "notes": [
         "`accountReference` must be 11 to 30 characters.",
+        "`accountName`, `firstName` and `lastName` are required; `phoneNumber`, `email` and `fundingTransactionLimit` are optional.",
         "Paga calls your `callbackUrl` whenever the account is funded."
       ],
       "languages": {
         "python": {
           "method": "register_persistent_payment_account",
-          "example": "account = await client.register_persistent_payment_account(\n    reference_number=\"REF-000006\",\n    account_reference=\"CUST-000184-WALLET\",\n    financial_identification_number=\"22222132329\",\n    credit_bank_id=\"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n    credit_bank_account_number=\"0000000000\",\n    callback_url=\"https://yourstore.com/webhooks/paga\",\n)"
+          "example": "account = await client.register_persistent_payment_account(\n    reference_number=\"REF-000006\",\n    account_reference=\"CUST-000184-WALLET\",\n    financial_identification_number=\"22222132329\",\n    credit_bank_id=\"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n    credit_bank_account_number=\"0000000000\",\n    account_name=\"Acme Store\",\n    first_name=\"Jane\",\n    last_name=\"Doe\",\n    callback_url=\"https://yourstore.com/webhooks/paga\",\n)"
         },
         "typescript": {
           "method": "registerPersistentPaymentAccount",
-          "example": "const account = await client.registerPersistentPaymentAccount({\n  referenceNumber: \"REF-000006\",\n  accountReference: \"CUST-000184-WALLET\",\n  financialIdentificationNumber: \"22222132329\",\n  creditBankId: \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n  creditBankAccountNumber: \"0000000000\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga\",\n});"
+          "example": "const account = await client.registerPersistentPaymentAccount({\n  referenceNumber: \"REF-000006\",\n  accountReference: \"CUST-000184-WALLET\",\n  financialIdentificationNumber: \"22222132329\",\n  creditBankId: \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n  creditBankAccountNumber: \"0000000000\",\n  accountName: \"Acme Store\",\n  firstName: \"Jane\",\n  lastName: \"Doe\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga\",\n});"
         },
         "rust": {
           "method": "register_persistent_payment_account",
-          "example": "let account = client\n    .register_persistent_payment_account(\n        RegisterPersistentPaymentAccount::new(\n            \"REF-000006\",\n            \"CUST-000184-WALLET\",\n            \"22222132329\",\n            \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n            \"0000000000\",\n            \"https://yourstore.com/webhooks/paga\",\n        ),\n    )\n    .await?;"
+          "example": "let account = client\n    .register_persistent_payment_account(\n        RegisterPersistentPaymentAccount::new(\n            \"REF-000006\",\n            \"CUST-000184-WALLET\",\n            \"22222132329\",\n            \"40090E2F-7446-4217-9345-7BBAB7043C4C\",\n            \"0000000000\",\n            \"https://yourstore.com/webhooks/paga\",\n            \"Acme Store\",\n            \"Jane\",\n            \"Doe\",\n        ),\n    )\n    .await?;"
         }
       }
     },
@@ -1505,20 +1518,21 @@
       ],
       "description": "Changes a persistent payment account.",
       "notes": [
-        "Every field takes part in the hash, so send the current value of the ones you are not changing."
+        "Every field takes part in the hash, so send the current value of the ones you are not changing.",
+        "Optional: `accountName`, `firstName`, `lastName` and `phoneNumber`, alongside the credit and callback fields."
       ],
       "languages": {
         "python": {
           "method": "update_persistent_payment_account",
-          "example": "account = await client.update_persistent_payment_account(\n    reference_number=\"REF-000007\",\n    account_identifier=\"CUST-000184-WALLET\",\n    callback_url=\"https://yourstore.com/webhooks/paga-v2\",\n)"
+          "example": "account = await client.update_persistent_payment_account(\n    reference_number=\"REF-000007\",\n    account_identifier=\"CUST-000184-WALLET\",\n    callback_url=\"https://yourstore.com/webhooks/paga-v2\",\n    account_name=\"Acme Store\",\n)"
         },
         "typescript": {
           "method": "updatePersistentPaymentAccount",
-          "example": "const account = await client.updatePersistentPaymentAccount({\n  referenceNumber: \"REF-000007\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga-v2\",\n});"
+          "example": "const account = await client.updatePersistentPaymentAccount({\n  referenceNumber: \"REF-000007\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n  callbackUrl: \"https://yourstore.com/webhooks/paga-v2\",\n  accountName: \"Acme Store\",\n});"
         },
         "rust": {
           "method": "update_persistent_payment_account",
-          "example": "let account = client\n    .update_persistent_payment_account(\n        UpdatePersistentPaymentAccount::new(\n            \"REF-000007\",\n            \"CUST-000184-WALLET\",\n        ),\n    )\n    .await?;"
+          "example": "let mut request = UpdatePersistentPaymentAccount::new(\n    \"REF-000007\",\n    \"CUST-000184-WALLET\",\n);\nrequest.account_name = Some(\"Acme Store\".to_string());\nlet account = client.update_persistent_payment_account(request).await?;"
         }
       }
     },
@@ -1567,20 +1581,21 @@
       ],
       "description": "Deletes a persistent payment account.",
       "notes": [
-        "The `accountIdentifier` accepts a NUBAN **or** an `accountReference`."
+        "The `accountIdentifier` accepts a NUBAN **or** an `accountReference`.",
+        "`reason` is optional."
       ],
       "languages": {
         "python": {
           "method": "delete_persistent_payment_account",
-          "example": "await client.delete_persistent_payment_account(\n    reference_number=\"REF-000009\",\n    account_identifier=\"CUST-000184-WALLET\",\n)"
+          "example": "await client.delete_persistent_payment_account(\n    reference_number=\"REF-000009\",\n    account_identifier=\"CUST-000184-WALLET\",\n    reason=\"Account closed\",\n)"
         },
         "typescript": {
           "method": "deletePersistentPaymentAccount",
-          "example": "await client.deletePersistentPaymentAccount({\n  referenceNumber: \"REF-000009\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n});"
+          "example": "await client.deletePersistentPaymentAccount({\n  referenceNumber: \"REF-000009\",\n  accountIdentifier: \"CUST-000184-WALLET\",\n  reason: \"Account closed\",\n});"
         },
         "rust": {
           "method": "delete_persistent_payment_account",
-          "example": "client\n    .delete_persistent_payment_account(\"REF-000009\", \"CUST-000184-WALLET\")\n    .await?;"
+          "example": "client\n    .delete_persistent_payment_account(\n        \"REF-000009\",\n        \"CUST-000184-WALLET\",\n        Some(\"Account closed\"),\n    )\n    .await?;"
         }
       }
     },

@@ -9,3 +9,4 @@ paga-rs-docs/
 # Scratch space
 *.tgz
 *.crate
+.env
